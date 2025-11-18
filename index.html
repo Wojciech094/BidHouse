@@ -2,19 +2,268 @@
 <html lang="en">
 
 <head>
-  <meta charset="utf-8" />
+  <meta charset="UTF-8" />
+  <title>BidHouse</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="/src/style.css" />
-  <title>BidHouse</title>
 </head>
 
-<body class="bg-gray-900 text-white min-h-screen flex flex-col items-center justify-center">
-  <div id="app" class="text-center">
-    <h1 class="text-4xl font-bold text-blue-400 mb-4">BidHouse Starter</h1>
-    <p class="text-gray-300">Ready for API</p>
-  </div>
+<body class="min-h-screen bg-zinc-100 text-zinc-900">
 
-  <script type="module" src="/src/main.js"></script>
+
+  <header class="sticky top-0 z-30 border-b border-zinc-200 bg-white/90 backdrop-blur-sm">
+    <div class="flex items-center justify-between max-w-6xl px-4 py-3 mx-auto">
+
+     
+      <div class="flex items-center gap-2">
+        <span
+          class="inline-flex items-center justify-center w-8 h-8 text-xs font-semibold text-white rounded-full bg-linear-to-br from-amber-500 to-amber-600">
+          BH
+        </span>
+        <span class="text-sm font-semibold tracking-[0.25em] text-zinc-900 uppercase">
+          BidHouse
+        </span>
+      </div>
+
+   
+      <nav class="hidden gap-6 text-sm text-zinc-700 md:flex">
+        <a href="#featured" class="hover:text-amber-700">Auctions</a>
+        <a href="#ending-soon" class="hover:text-amber-700">Ending soon</a>
+        <a href="#featured" class="hover:text-amber-700">Featured</a>
+        <a href="#about" class="hover:text-amber-700">About</a>
+      </nav>
+
+
+      <div class="flex items-center gap-3 text-sm">
+
+     
+        <div id="auth-logged-out" class="flex items-center gap-3">
+          <a href="./login.html"
+            class="hidden md:inline-flex rounded-full border border-zinc-300 px-4 py-1.5 text-zinc-800 hover:border-amber-500 hover:text-amber-700">
+            Log in
+          </a>
+
+          <a href="./register.html"
+            class="inline-flex items-center rounded-full bg-amber-600 px-4 py-1.5 font-medium text-white hover:bg-amber-500">
+            Create account
+          </a>
+        </div>
+
+      
+        <div id="auth-logged-in" class="items-center hidden gap-3">
+          <div id="user-chip"
+            class="inline-flex items-center gap-2 px-3 py-1 text-xs border rounded-full shadow-sm border-zinc-200 bg-zinc-50 text-zinc-700">
+            <span id="user-avatar"
+              class="flex h-6 w-6 items-center justify-center rounded-full bg-linear-to-br from-amber-500 to-amber-600 text-[10px] font-semibold text-white">
+              U
+            </span>
+            <span id="user-name" class="font-medium"></span>
+          </div>
+
+          <button id="logout-btn" class="text-xs font-medium text-zinc-500 hover:text-amber-700">
+            Logout
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+
+    
+    <section class="bg-linear-to-b from-zinc-50 via-zinc-100 to-zinc-100">
+      <div class="flex flex-col max-w-6xl gap-10 px-4 py-16 mx-auto lg:flex-row lg:py-20">
+
+        <div class="flex-1 space-y-6">
+          <p class="text-[11px] font-semibold tracking-[0.32em] uppercase text-amber-700">
+            Fine Art & Collectibles
+          </p>
+
+          <h1 class="text-3xl font-light tracking-tight sm:text-4xl lg:text-5xl text-zinc-900">
+            Discover Exceptional
+          </h1>
+
+          <p class="max-w-xl text-sm text-zinc-600">
+            BidHouse connects discerning collectors with carefully curated lots from trusted auction houses.
+          </p>
+
+          <div class="flex flex-wrap gap-3">
+            <a href="#featured"
+              class="inline-flex items-center px-5 py-2 text-sm font-semibold text-white rounded-full bg-amber-600 hover:bg-amber-500">
+              Explore lots
+            </a>
+
+            <a href="#ending-soon"
+              class="inline-flex items-center px-5 py-2 text-sm font-semibold bg-white border rounded-full border-zinc-300 text-zinc-800 hover:border-amber-500 hover:text-amber-700">
+              View ending soon
+            </a>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+
+    <section id="featured" class="bg-white py-14">
+      <div class="max-w-6xl px-4 mx-auto">
+        <div class="flex items-end justify-between gap-4 mb-6">
+          <div>
+            <h2 class="text-xl font-semibold text-zinc-900">Featured Lots</h2>
+            <p class="text-sm text-zinc-500">
+              Latest items from the auction house
+            </p>
+          </div>
+        </div>
+
+     
+        <div id="featured-grid" class="grid gap-5 md:grid-cols-2 lg:grid-cols-4">
+          <p class="text-sm col-span-full text-zinc-400">Loading featured lots…</p>
+        </div>
+
+       
+        <div id="featured-load-more-wrapper" class="flex items-center justify-center mt-6">
+          <button id="featured-load-more"
+            class="rounded-full border border-zinc-300 px-4 py-1.5 text-xs font-medium text-zinc-700 hover:border-amber-500 hover:text-amber-700">
+            Load more lots
+          </button>
+        </div>
+      </div>
+    </section>
+
+   
+    <section id="ending-soon" class="border-t bg-zinc-50 py-14 border-zinc-200">
+      <div class="max-w-6xl px-4 mx-auto">
+        <div class="mb-8 text-center">
+          <h2 class="text-xl font-semibold text-zinc-900">Soon to End</h2>
+          <p class="mt-1 text-sm text-zinc-500">Auctions closing shortly — don't miss your chance</p>
+        </div>
+
+        <div id="ending-soon-grid" class="grid gap-5 md:grid-cols-2 lg:grid-cols-4">
+          <p class="text-sm text-center col-span-full text-zinc-400">Loading auctions...</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="about" class="text-white bg-zinc-950 py-14">
+      <div class="max-w-6xl px-4 mx-auto">
+        <div class="mb-8 text-center">
+          <p class="text-xs font-semibold uppercase tracking-[0.32em] text-amber-300">
+            Why Choose BidHouse
+          </p>
+          <h2 class="mt-2 text-xl font-semibold">A trusted partner for collectors</h2>
+        </div>
+
+        <div class="grid gap-8 md:grid-cols-3">
+          <div class="space-y-2 text-sm">
+            <div
+              class="inline-flex items-center justify-center mb-2 rounded-full h-9 w-9 bg-amber-500/10 text-amber-300">
+              ★
+            </div>
+            <h3 class="text-sm font-semibold">Curated selection</h3>
+            <p class="text-xs text-zinc-300">
+              Every lot is reviewed by our specialists to ensure authenticity and quality.
+            </p>
+          </div>
+
+          <div class="space-y-2 text-sm">
+            <div
+              class="inline-flex items-center justify-center mb-2 rounded-full h-9 w-9 bg-amber-500/10 text-amber-300">
+              ✓
+            </div>
+            <h3 class="text-sm font-semibold">Transparent bidding</h3>
+            <p class="text-xs text-zinc-300">
+              Clear bidding history, fees and timelines so you always know where you stand.
+            </p>
+          </div>
+
+          <div class="space-y-2 text-sm">
+            <div
+              class="inline-flex items-center justify-center mb-2 rounded-full h-9 w-9 bg-amber-500/10 text-amber-300">
+              &#x231B;
+            </div>
+            <h3 class="text-sm font-semibold">Secure payments</h3>
+            <p class="text-xs text-zinc-300">
+              Protected transactions and verified partners for worry-free collecting.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+   
+    <section class="bg-white py-14">
+      <div class="max-w-6xl px-4 mx-auto">
+        <div class="mb-6 text-center">
+          <h2 class="text-sm font-semibold tracking-[0.28em] uppercase text-zinc-500">
+            What Our Clients Say
+          </h2>
+        </div>
+
+        <div class="grid gap-5 md:grid-cols-3">
+          <article class="flex flex-col px-5 py-6 text-sm border shadow-sm rounded-2xl border-zinc-200 bg-zinc-50">
+            <p class="text-xs text-zinc-500">“The bidding experience feels premium yet simple. I always know
+              exactly what I'm bidding on.”</p>
+            <p class="mt-4 text-xs font-semibold text-zinc-800">Eline, Oslo</p>
+          </article>
+
+          <article class="flex flex-col px-5 py-6 text-sm border shadow-sm rounded-2xl border-zinc-200 bg-zinc-50">
+            <p class="text-xs text-zinc-500">“Great selection and smooth checkout. The countdown timers keep the
+              excitement high.”</p>
+            <p class="mt-4 text-xs font-semibold text-zinc-800">Jonas, Bergen</p>
+          </article>
+
+          <article class="flex flex-col px-5 py-6 text-sm border shadow-sm rounded-2xl border-zinc-200 bg-zinc-50">
+            <p class="text-xs text-zinc-500">“BidHouse has become my go-to place for design pieces and prints.”</p>
+            <p class="mt-4 text-xs font-semibold text-zinc-800">Kari, Stavanger</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+ 
+    <section class="bg-[#f7f6f3] py-14">
+      <div class="max-w-6xl px-4 mx-auto text-center">
+        <h2 class="text-sm font-semibold tracking-[0.28em] uppercase text-zinc-500">
+          Stay Informed
+        </h2>
+        <p class="mt-2 text-sm text-zinc-600">
+          Subscribe for catalog releases and auction highlights.
+        </p>
+
+        <form class="flex flex-col max-w-md gap-3 mx-auto mt-5 sm:flex-row">
+          <input type="email" required placeholder="Your email"
+            class="flex-1 px-4 py-2 text-xs bg-white border rounded-full outline-none border-zinc-300 text-zinc-800 focus:border-amber-500">
+          <button class="px-4 py-2 text-xs font-medium text-white rounded-full bg-amber-600 hover:bg-amber-700">
+            Subscribe
+          </button>
+        </form>
+      </div>
+    </section>
+
+  </main>
+
+
+  <footer class="text-xs bg-white border-t border-zinc-200 text-zinc-500">
+    <div class="max-w-6xl px-4 py-6 mx-auto">
+      <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+        <p class="text-[11px]">
+          © <span id="year"></span> BidHouse. All rights reserved.
+        </p>
+
+        <div class="flex flex-wrap gap-4 text-[11px]">
+          <a href="#" class="hover:text-zinc-900">Terms</a>
+          <a href="#" class="hover:text-zinc-900">Privacy</a>
+          <a href="#" class="hover:text-zinc-900">Contact</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  
+  <script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+  </script>
+  <script type="module" src="/src/js/index.js"></script>
 </body>
 
 </html>
