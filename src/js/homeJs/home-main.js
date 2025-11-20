@@ -1,3 +1,4 @@
+import '../../style.css';
 
 import { setupHeader, initMobileNav } from './home-header.js';
 import { initSearchAndFeatured, loadEndingSoon } from './home-listings.js';
