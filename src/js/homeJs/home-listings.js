@@ -187,16 +187,17 @@ function createFeaturedCard(listing) {
         </div>
       </div>
 
-      ${
-				endsAtDate
-					? `<p class="mt-2 text-[10px] text-zinc-400">
-               ${endsAtDate.toLocaleDateString()} ${endsAtDate.toLocaleTimeString([], {
-							hour: '2-digit',
-							minute: '2-digit',
-					  })}
-             </p>`
-					: ''
-			}
+    ${
+			endsAtDate
+				? `<p class="mt-2 text-[10px] text-zinc-400">
+         ${endsAtDate.toLocaleDateString('nb-NO')} ${endsAtDate.toLocaleTimeString('nb-NO', {
+						hour: '2-digit',
+						minute: '2-digit',
+						hour12: false,
+				  })}
+       </p>`
+				: ''
+		}
 
       <div class="mt-4 flex items-center justify-between gap-3">
         <form
