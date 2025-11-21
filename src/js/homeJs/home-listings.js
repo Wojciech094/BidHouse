@@ -138,6 +138,9 @@ function createFeaturedCard(listing) {
 	const isEnded = endsAtDate ? endsAtDate <= now : false;
 	const endsInText = endsAtDate ? formatEndsIn(endsAtDate) : 'Unknown';
 
+
+	const detailsUrl = `single.html?id=${encodeURIComponent(listing.id)}`;
+
 	const card = document.createElement('article');
 	card.className = 'flex flex-col overflow-hidden rounded-[26px] border border-zinc-200 bg-white shadow-sm';
 
@@ -150,11 +153,14 @@ function createFeaturedCard(listing) {
 
     <div class="px-5 pt-2">
       <div class="overflow-hidden rounded-3xl">
-        <img
-          src="${imgUrl}"
-          alt="${imgAlt}"
-          class="h-64 w-full object-cover"
-        />
+        
+        <a href="${detailsUrl}">
+          <img
+            src="${imgUrl}"
+            alt="${imgAlt}"
+            class="h-64 w-full object-cover cursor-pointer"
+          />
+        </a>
       </div>
     </div>
 
@@ -187,17 +193,17 @@ function createFeaturedCard(listing) {
         </div>
       </div>
 
-    ${
-			endsAtDate
-				? `<p class="mt-2 text-[10px] text-zinc-400">
+      ${
+				endsAtDate
+					? `<p class="mt-2 text-[10px] text-zinc-400">
          ${endsAtDate.toLocaleDateString('nb-NO')} ${endsAtDate.toLocaleTimeString('nb-NO', {
-						hour: '2-digit',
-						minute: '2-digit',
-						hour12: false,
-				  })}
+							hour: '2-digit',
+							minute: '2-digit',
+							hour12: false,
+					  })}
        </p>`
-				: ''
-		}
+					: ''
+			}
 
       <div class="mt-4 flex items-center justify-between gap-3">
         <form
@@ -222,8 +228,9 @@ function createFeaturedCard(listing) {
           </button>
         </form>
 
+       
         <a
-          href="/listing.html?id=${listing.id}"
+          href="${detailsUrl}"
           class="inline-flex items-center rounded-full border border-zinc-300 px-4 py-1.5 text-[11px] font-medium text-zinc-800 hover:border-amber-500 hover:text-amber-700"
         >
           View details
@@ -241,6 +248,7 @@ function createFeaturedCard(listing) {
 
 	return card;
 }
+
 
 function renderFeatured(listings, { append = false } = {}) {
 	if (!featuredGrid) return;

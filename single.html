@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>BidHouse - Listing</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+</head>
+
+<body class="flex flex-col min-h-screen bg-zinc-100 text-zinc-900">
+
+   
+    <header class="sticky top-0 z-30 border-b border-zinc-200 bg-white/90 backdrop-blur-sm">
+        <div class="flex items-center justify-between px-4 py-3 mx-auto max-w-7xl">
+
+            <div class="flex items-center gap-2">
+                <span
+                    class="inline-flex items-center justify-center w-8 h-8 text-xs font-semibold text-white rounded-full bg-linear-to-br from-amber-500 to-amber-600">
+                    BH
+                </span>
+                <span class="text-sm font-semibold tracking-[0.25em] text-zinc-900 uppercase">
+                    BidHouse
+                </span>
+            </div>
+
+            <nav class="hidden gap-6 text-sm text-zinc-700 md:flex">
+                <a href="./index.html#featured" class="hover:text-amber-700">Auctions</a>
+                <a href="./index.html#ending-soon" class="hover:text-amber-700">Ending soon</a>
+                <a href="./index.html#featured" class="hover:text-amber-700">Featured</a>
+                <a href="./index.html#about" class="hover:text-amber-700">About</a>
+            </nav>
+
+            <div class="flex items-center gap-3 text-sm">
+
+                <div id="auth-logged-out" class="flex items-center gap-3">
+                    <a href="./login.html"
+                        class="hidden md:inline-flex rounded-full border border-zinc-300 px-4 py-1.5 text-zinc-800 hover:border-amber-500 hover:text-amber-700 text-sm">
+                        Log in
+                    </a>
+
+                    <a href="./register.html"
+                        class="inline-flex items-center rounded-full bg-amber-600 px-4 py-1.5 font-medium text-white hover:bg-amber-500 text-sm">
+                        Create account
+                    </a>
+                </div>
+
+                <div id="auth-logged-in" class="items-center hidden gap-3">
+                    <div id="user-chip"
+                        class="inline-flex items-center gap-2 px-3 py-1 text-xs border rounded-full shadow-sm border-zinc-200 bg-zinc-50 text-zinc-700">
+                        <span id="user-avatar"
+                            class="flex h-6 w-6 items-center justify-center rounded-full bg-linear-to-br from-amber-500 to-amber-600 text-[10px] font-semibold text-white">
+                            U
+                        </span>
+                        <span id="user-name" class="font-medium"></span>
+                    </div>
+
+                    <button id="logout-btn" class="text-xs font-medium text-zinc-500 hover:text-amber-700">
+                        Logout
+                    </button>
+                </div>
+
+                <button id="mobile-menu-toggle" class="md:hidden text-zinc-700 hover:text-amber-700">
+                    <span data-icon="open" class="text-2xl leading-none">☰</span>
+                    <span data-icon="close" class="hidden text-2xl leading-none">x</span>
+                </button>
+            </div>
+        </div>
+
+        <div id="mobile-menu" class="hidden bg-white border-t border-zinc-200 md:hidden">
+            <nav class="max-w-6xl px-4 pt-3 pb-4 mx-auto space-y-3 text-sm text-zinc-800">
+                <a href="./index.html#featured" class="block py-1 hover:text-amber-700">Auctions</a>
+                <a href="./index.html#ending-soon" class="block py-1 hover:text-amber-700">Ending soon</a>
+                <a href="./index.html#featured" class="block py-1 hover:text-amber-700">Featured</a>
+                <a href="./index.html#about" class="block py-1 hover:text-amber-700">About</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="flex-1">
+
+        <section class="bg-white border-b border-zinc-200">
+            <div class="px-6 py-8 mx-auto max-w-7xl">
+                <p class="text-xs font-semibold tracking-[0.28em] uppercase text-amber-700">
+                    Listing details
+                </p>
+                <h1 class="mt-1 text-2xl font-semibold text-zinc-900">
+                    Single listing
+                </h1>
+                <p class="mt-1 text-sm text-zinc-500" id="single-message">Loading listing…</p>
+            </div>
+        </section>
+
+        
+        <section class="py-8 bg-linear-to-b from-zinc-50 via-zinc-100 to-zinc-100">
+            <div class="px-6 mx-auto max-w-7xl lg:px-10">
+
+               
+                <div class="mb-4">
+                    <a href="./index.html"
+                        class="inline-flex items-center px-5 py-2 text-sm font-medium border rounded-full border-zinc-300 text-zinc-800 hover:border-amber-500 hover:text-amber-700">
+                        ← Back to Home
+                    </a>
+                </div>
+
+               
+                <article id="single-wrapper"
+                    class="hidden overflow-hidden bg-white border shadow-md rounded-4xl border-zinc-200">
+                    <div class="flex flex-col lg:flex-row">
+
+                        
+                        <div class="lg:w-1/2">
+                            <img id="single-image" src="" alt="" class="h-[460px] w-full object-cover bg-zinc-100" />
+                        </div>
+
+                       
+                        <div class="p-8 text-sm lg:w-1/2 text-zinc-800">
+
+                            <p id="single-badge"
+                                class="mb-3 text-[11px] font-semibold tracking-[0.26em] uppercase text-amber-600">
+                                LIVE AUCTION
+                            </p>
+
+                            <h2 id="single-title" class="mb-2 text-2xl font-semibold text-zinc-900">Loading…</h2>
+
+                            <p id="single-description" class="mb-5 text-[13px] leading-relaxed text-zinc-700"></p>
+
+                            <p class="mb-1 text-[12px] text-zinc-500">
+                                Seller:
+                                <span id="single-seller" class="font-medium text-zinc-800"></span>
+                            </p>
+
+                            <p class="mb-4 text-[12px] text-zinc-500">
+                                Ends:
+                                <span id="single-ends" class="font-medium text-zinc-800"></span>
+                            </p>
+
+                            <div class="mb-5">
+                                <p class="text-[11px] uppercase tracking-[0.18em] text-zinc-400">Current bid</p>
+                                <p id="single-price" class="mt-1 text-[15px] font-semibold text-zinc-900"></p>
+                            </div>
+
+                            
+                            <section class="mb-6">
+                                <h3 class="mb-1 text-[12px] font-semibold text-zinc-900">Bids</h3>
+                                <ul id="single-bids" class="text-[12px] text-zinc-700 space-y-1"></ul>
+                            </section>
+
+                            
+                            <section id="bid-section" class="hidden pt-4 mt-4 border-t border-zinc-200">
+                                <h3 class="mb-2 text-[12px] font-semibold text-zinc-900">Place a bid</h3>
+
+                                <form id="bid-form" class="flex flex-wrap items-center gap-3">
+                                    <input type="number" id="bid-amount" min="1" step="1" required class="w-28 rounded-full border border-zinc-300 px-3 py-1.5 text-[12px] text-zinc-800
+                      focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500/60"
+                                        placeholder="Bid" />
+                                    <button type="submit" class="rounded-full bg-amber-600 px-5 py-1.5 text-[12px] font-semibold text-white
+                      hover:bg-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-500/60">
+                                        Place bid
+                                    </button>
+                                </form>
+
+                                <p id="bid-success" class="mt-2 text-[11px] text-emerald-600 hidden">
+                                    Bid placed successfully.
+                                </p>
+                                <p id="bid-error" class="mt-2 text-[11px] text-red-600 hidden">
+                                    Could not place bid.
+                                </p>
+                            </section>
+
+                        </div>
+                    </div>
+                </article>
+            </div>
+        </section>
+
+    </main>
+
+   
+    <footer class="mt-auto text-xs bg-white border-t border-zinc-200 text-zinc-500">
+        <div class="max-w-6xl px-4 py-6 mx-auto">
+            <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                <p class="text-[11px]">
+                    © <span id="year"></span> BidHouse. All rights reserved.
+                </p>
+
+                <div class="flex flex-wrap gap-4 text-[11px]">
+                    <a href="#" class="hover:text-zinc-900">Terms</a>
+                    <a href="#" class="hover:text-zinc-900">Privacy</a>
+                    <a href="#" class="hover:text-zinc-900">Contact</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.getElementById("year").textContent = new Date().getFullYear();
+    </script>
+
+    
+    <script type="module" src="/src/js/homeJs/home-main.js"></script>
+    <script type="module" src="/src/js/single-listing.js"></script>
+
+</body>
+
+</html>
