@@ -1,5 +1,4 @@
 import { AUCTION, apiRequest, getUser, ensureApiKey, showApiError } from './auth.js';
-
 import { getHighestBid } from './utils.js';
 
 const grid = document.getElementById('wins-grid');
@@ -25,7 +24,6 @@ function escapeHtml(str = '') {
 }
 
 function updateWinsNotification(count) {
-	
 	localStorage.setItem(LAST_SEEN_WINS_KEY, String(count));
 
 	const badge = document.getElementById('notif-badge');
@@ -158,7 +156,7 @@ async function loadWins() {
 		);
 	} catch (error) {
 		console.error('My wins error:', error);
-		showApiError(document.getElementById('my-wins-grid'));
+		showApiError(grid);
 	}
 }
 

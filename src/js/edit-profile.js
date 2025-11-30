@@ -1,6 +1,4 @@
-
-import { AUCTION, apiRequest, getUser, showApiError } from './auth.js';
-
+import { AUCTION, apiRequest, getUser, ensureApiKey, showApiError } from './auth.js';
 const avatarInput = document.getElementById('edit-avatar');
 const bannerInput = document.getElementById('edit-banner');
 const bioInput = document.getElementById('edit-bio');
@@ -57,6 +55,8 @@ if (bannerInput) {
 
 async function loadExistingProfile(user) {
 	try {
+		await ensureApiKey();
+
 		const { data } = await apiRequest(`${AUCTION}/profiles/${encodeURIComponent(user.name)}`);
 
 		if (avatarInput && data.avatar?.url) {
@@ -78,7 +78,7 @@ async function loadExistingProfile(user) {
 		}
 	} catch (error) {
 		console.error('Could not load profile for edit', error);
-		
+
 		showApiError(form || document.querySelector('main'), 'Could not load your profile data. Please try again.');
 	}
 }
@@ -139,10 +139,12 @@ async function handleSubmit(event) {
 			submitBtn.textContent = 'Saving...';
 		}
 
-		await apiRequest(`${AUCTION}/profiles/${encodeURIComponent(user.name)}`, {
-			method: 'PUT',
-			body: JSON.stringify(body),
-		});
+				await ensureApiKey();
+
+				await apiRequest(`${AUCTION}/profiles/${encodeURIComponent(user.name)}`, {
+					method: 'PUT',
+					body: JSON.stringify(body),
+				});
 
 		showMessage('Profile updated. Redirecting...', 'success');
 
