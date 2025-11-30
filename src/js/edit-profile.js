@@ -1,5 +1,5 @@
 
-import { AUCTION, apiRequest, getUser } from './auth.js';
+import { AUCTION, apiRequest, getUser, showApiError } from './auth.js';
 
 const avatarInput = document.getElementById('edit-avatar');
 const bannerInput = document.getElementById('edit-banner');
@@ -76,11 +76,10 @@ async function loadExistingProfile(user) {
 		if (bioInput && data.bio) {
 			bioInput.value = data.bio;
 		}
-	} catch (err) {
-		console.error('Could not load profile for edit', err);
-		showMessage('Could not load profile.', 'error');
-		updateAvatarPreview('');
-		updateBannerPreview('');
+	} catch (error) {
+		console.error('Could not load profile for edit', error);
+		
+		showApiError(form || document.querySelector('main'), 'Could not load your profile data. Please try again.');
 	}
 }
 
@@ -98,7 +97,6 @@ async function handleSubmit(event) {
 	const bannerUrl = bannerInput?.value.trim() || '';
 	const bio = bioInput?.value.trim() || '';
 
-	
 	if (avatarUrl && isDataUrl(avatarUrl)) {
 		showMessage('Avatar URL cannot be a base64 data URL. Please paste a normal https image URL.', 'error');
 		return;
@@ -151,13 +149,13 @@ async function handleSubmit(event) {
 		if (avatarUrl) updateAvatarPreview(avatarUrl);
 		if (bannerUrl) updateBannerPreview(bannerUrl);
 
-		
 		setTimeout(() => {
 			window.location.href = './profile.html';
 		}, 1200);
-	} catch (err) {
-		console.error(err);
-		showMessage('Error saving changes.', 'error');
+	} catch (error) {
+		console.error('Error saving profile changes:', error);
+		
+		showApiError(form || document.querySelector('main'), 'Error saving changes. Please try again.');
 	} finally {
 		const submitBtn = form?.querySelector('button[type="submit"]');
 		if (submitBtn) {

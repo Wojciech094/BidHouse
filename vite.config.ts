@@ -11,7 +11,13 @@ export default defineConfig({
 				register: './register.html',
 				profile: './profile.html',
 				edit: './edit-profile.html',
+				create: './create.html',
+				editListing: './edit-listing.html',
+				myBids: './my-bids.html',
+				myListing: './my-listings.html',
+				
 				single: './single.html',
+				wins: './my-wins.html',
 			},
 		},
 	},

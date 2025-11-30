@@ -1,10 +1,8 @@
-import { AUCTION, apiRequest, formatEndsIn } from './auth.js';
+import { AUCTION, apiRequest, getUser, ensureApiKey, formatEndsIn, showToast, showApiError } from './auth.js';
+import { getListingIdFromUrl, getHighestBid } from './utils.js';
 
-
-function getListingIdFromUrl() {
-	const params = new URLSearchParams(window.location.search);
-	return params.get('id');
-}
+let currentListing = null;
+let currentListingId = null;
 
 function showMessage(text, type = 'info') {
 	const el = document.getElementById('single-message');
@@ -12,133 +10,168 @@ function showMessage(text, type = 'info') {
 
 	el.textContent = text || '';
 
-	el.classList.remove('text-red-500', 'text-zinc-500');
-	if (!text) return;
+	el.classList.remove('text-red-600', 'text-zinc-500', 'text-emerald-600');
 
 	if (type === 'error') {
-		el.classList.add('text-red-500');
+		el.classList.add('text-red-600');
+	} else if (type === 'success') {
+		el.classList.add('text-emerald-600');
 	} else {
 		el.classList.add('text-zinc-500');
 	}
 }
 
-function getUser() {
-	try {
-		return JSON.parse(localStorage.getItem('user'));
-	} catch {
-		return null;
-	}
+function escapeHtml(str = '') {
+	return str
+		.replace(/&/g, '&amp;')
+		.replace(/</g, '&lt;')
+		.replace(/>/g, '&gt;')
+		.replace(/"/g, '&quot;')
+		.replace(/'/g, '&#039;');
 }
 
-async function fetchListing(id) {
-	const url = `${AUCTION}/listings/${encodeURIComponent(id)}?_seller=true&_bids=true`;
-
-	const { data } = await apiRequest(url);
-	return data;
-}
-
-function getHighestBid(listing) {
-	const bids = Array.isArray(listing.bids) ? listing.bids : [];
-	if (!bids.length) return listing.price ?? 0;
-
-	const highest = bids.reduce((max, bid) => (bid.amount > max ? bid.amount : max), 0);
-	return highest || listing.price || 0;
+function isListingActive(listing) {
+	if (!listing || !listing.endsAt) return true;
+	return new Date(listing.endsAt).getTime() > Date.now();
 }
 
 function renderBids(listing) {
-	const bidsUl = document.getElementById('single-bids');
-	if (!bidsUl) return;
+	const listEl = document.getElementById('single-bids');
+	if (!listEl) return;
 
-	const bids = Array.isArray(listing.bids) ? listing.bids : [];
-	bidsUl.innerHTML = '';
+	listEl.innerHTML = '';
+
+	const bids = Array.isArray(listing.bids) ? listing.bids.slice() : [];
 
 	if (!bids.length) {
-		const li = document.createElement('li');
-		li.textContent = 'No bids yet.';
-		bidsUl.appendChild(li);
+		listEl.innerHTML = `<li class="text-[12px] text-zinc-500">No bids yet.</li>`;
 		return;
 	}
 
-	const user = getUser();
-	const isLoggedIn = !!user;
-
-	const sorted = [...bids].sort((a, b) => b.amount - a.amount);
-
-	for (const bid of sorted) {
-		const li = document.createElement('li');
-
-		const apiName = bid.bidderName || bid.bidder?.name || null;
-
-		let label;
-
-		if (!isLoggedIn) {
-			label = 'Bidder';
-		} else if (apiName) {
-			if (apiName === user.name) {
-				label = `${apiName} (you)`;
-			} else {
-				label = apiName;
-			}
-		} else {
-			label = 'Bidder';
+	bids.sort((a, b) => {
+		if (a.amount === b.amount) {
+			return new Date(b.created).getTime() - new Date(a.created).getTime();
 		}
+		return b.amount - a.amount;
+	});
 
+	bids.forEach((bid, index) => {
+		const li = document.createElement('li');
+		const created = bid.created
+			? new Date(bid.created).toLocaleString('en-GB', {
+					year: 'numeric',
+					month: 'short',
+					day: '2-digit',
+					hour: '2-digit',
+					minute: '2-digit',
+			  })
+			: '';
+
+		const isTop = index === 0;
+
+		
+		const bidderName = (bid.bidder && bid.bidder.name) || bid.bidderName || 'Anonymous';
+
+		li.className = 'flex items-center justify-between gap-2';
 		li.innerHTML = `
-			<span class="flex items-center gap-1">
-				${label} -
-				<span class="flex items-center gap-1 font-medium">
-					${bid.amount}
-					<img src="/credits.svg" alt="credits" class="w-3 h-3" />
-				</span>
-			</span>
-		`;
+      <span class="text-[12px] ${isTop ? 'font-semibold text-zinc-900' : 'text-zinc-700'}">
+        ${escapeHtml(bidderName)}
+      </span>
+      <span class="text-[12px] ${isTop ? 'font-semibold text-zinc-900' : 'text-zinc-700'}">
+        ${bid.amount} credits
+      </span>
+      <span class="text-[10px] text-zinc-400">
+        ${created}
+      </span>
+    `;
 
-		bidsUl.appendChild(li);
-	}
+		listEl.appendChild(li);
+	});
 }
 
 
+function updatePriceArea(listing) {
+	const priceEl = document.getElementById('single-price');
+	if (!priceEl) return;
+
+	const highest = getHighestBid(listing);
+	const bidsCount = Array.isArray(listing.bids) ? listing.bids.length : 0;
+
+	const bidsText = !bidsCount ? '(no bids yet)' : `(${bidsCount} bid${bidsCount === 1 ? '' : 's'})`;
+
+	priceEl.innerHTML = `
+		<span class="inline-flex items-center gap-1">
+			<span>${highest}</span>
+			<span class="inline-flex items-center gap-1">
+				<img src="/credits.svg" class="w-4 h-4 opacity-80" alt="Credits icon" />
+				
+			</span>
+			<span>${bidsText}</span>
+		</span>
+	`;
+}
+
+function setupBidSectionState(listing) {
+	const user = getUser();
+	const bidSection = document.getElementById('bid-section');
+	const ownListingNote = document.getElementById('single-own-listing-note');
+
+	if (!bidSection || !ownListingNote) return;
+
+	ownListingNote.classList.add('hidden');
+	bidSection.classList.add('hidden');
+
+	if (!user) {
+		
+		return;
+	}
+
+	if (listing.seller?.name === user.name) {
+		ownListingNote.classList.remove('hidden');
+		return;
+	}
+
+	if (!isListingActive(listing)) {
+	
+		return;
+	}
+
+	bidSection.classList.remove('hidden');
+}
 
 function renderListing(listing) {
 	const wrapper = document.getElementById('single-wrapper');
-	if (!wrapper) return;
-
-	
-	wrapper.classList.remove('hidden');
-
 	const imgEl = document.getElementById('single-image');
 	const titleEl = document.getElementById('single-title');
 	const descEl = document.getElementById('single-description');
 	const sellerEl = document.getElementById('single-seller');
 	const endsEl = document.getElementById('single-ends');
-	const priceEl = document.getElementById('single-price');
 	const badgeEl = document.getElementById('single-badge');
 
-	const imgUrl = listing.media?.[0]?.url ?? 'https://placehold.co/600x400?text=No+image';
-	const imgAlt = listing.media?.[0]?.alt ?? listing.title ?? 'Listing';
+	if (!wrapper) return;
+
+	const media = Array.isArray(listing.media) ? listing.media : [];
+	const firstMedia = media[0];
+	const imgUrl =
+		(typeof firstMedia === 'string' && firstMedia) ||
+		(firstMedia && typeof firstMedia === 'object' && firstMedia.url) ||
+		'https://placehold.co/800x600?text=No+image';
 
 	if (imgEl) {
 		imgEl.src = imgUrl;
-		imgEl.alt = imgAlt;
+		imgEl.alt = listing.title || 'Listing image';
 	}
 
-	if (titleEl) titleEl.textContent = listing.title ?? 'Untitled listing';
-	if (descEl) descEl.textContent = listing.description || 'No description provided.';
-	if (sellerEl) sellerEl.textContent = listing.seller?.name || 'Unknown seller';
-
-	if (badgeEl) {
-		const bidsCount = listing._count?.bids ?? 0;
-		badgeEl.textContent = bidsCount > 0 ? `${bidsCount} bids` : 'No bids yet';
+	if (titleEl) {
+		titleEl.textContent = listing.title || 'Untitled listing';
 	}
 
-	const highestBid = getHighestBid(listing);
-	if (priceEl) {
-		priceEl.innerHTML = `
-			<span class="flex items-center gap-1">
-				${highestBid}
-				<img src="/credits.svg" alt="credits" class="w-4 h-4" />
-			</span>
-		`;
+	if (descEl) {
+		descEl.textContent = listing.description || '';
+	}
+
+	if (sellerEl) {
+		sellerEl.textContent = listing.seller?.name || 'Unknown seller';
 	}
 
 	if (endsEl) {
@@ -149,13 +182,42 @@ function renderListing(listing) {
 		}
 	}
 
+	if (badgeEl) {
+		if (isListingActive(listing)) {
+			badgeEl.textContent = 'LIVE AUCTION';
+			badgeEl.classList.remove('text-zinc-400');
+			badgeEl.classList.add('text-amber-600');
+		} else {
+			badgeEl.textContent = 'AUCTION ENDED';
+			badgeEl.classList.remove('text-amber-600');
+			badgeEl.classList.add('text-zinc-400');
+		}
+	}
+
+	updatePriceArea(listing);
 	renderBids(listing);
+	setupBidSectionState(listing);
 
-	const user = getUser();
-	const bidSection = document.getElementById('bid-section');
+	wrapper.classList.remove('hidden');
+}
 
-	if (user) {
-		bidSection.classList.remove('hidden');
+async function loadListing(id) {
+	try {
+		await ensureApiKey();
+
+		const url = `${AUCTION}/listings/${encodeURIComponent(id)}?_bids=true&_seller=true`;
+		const { data } = await apiRequest(url);
+
+		currentListing = data;
+		currentListingId = data.id;
+
+		showMessage('', 'info');
+		renderListing(data);
+	} catch (error) {
+		console.error('Single listing error:', error);
+
+		
+		showApiError(document.getElementById('single-wrapper'), 'Could not load this listing. Please try again.');
 	}
 }
 
@@ -163,86 +225,99 @@ function renderListing(listing) {
 async function handleBidSubmit(event) {
 	event.preventDefault();
 
-	const form = event.target;
 	const amountInput = document.getElementById('bid-amount');
 	const successEl = document.getElementById('bid-success');
 	const errorEl = document.getElementById('bid-error');
 
+	if (successEl) successEl.classList.add('hidden');
+	if (errorEl) errorEl.classList.add('hidden');
+
+	const user = getUser();
+	if (!user) {
+		showMessage('You must be logged in to place a bid.', 'error');
+		window.location.href = './login.html';
+		return;
+	}
+
+	if (!currentListing || !currentListingId) {
+		showMessage('Listing data not loaded yet.', 'error');
+		return;
+	}
+
+	if (!isListingActive(currentListing)) {
+		showMessage('This auction has already ended.', 'error');
+		return;
+	}
+
 	if (!amountInput) return;
 
-	const rawAmount = amountInput.value;
-	const amount = Number(rawAmount);
-
-	if (!Number.isFinite(amount) || amount <= 0) {
-		errorEl.textContent = 'Enter a valid amount.';
-		errorEl.classList.remove('hidden');
+	const value = Number(amountInput.value);
+	if (!Number.isFinite(value) || value <= 0) {
+		if (errorEl) {
+			errorEl.textContent = 'Please enter a valid bid amount.';
+			errorEl.classList.remove('hidden');
+		}
 		return;
 	}
 
-	const token = localStorage.getItem('token');
-	if (!token) {
-		errorEl.textContent = 'You must be logged in to place a bid.';
-		errorEl.classList.remove('hidden');
+	const currentHighest = getHighestBid(currentListing);
+	if (value <= currentHighest) {
+		if (errorEl) {
+			errorEl.textContent = `Your bid must be higher than the current bid (${currentHighest} credits).`;
+			errorEl.classList.remove('hidden');
+		}
 		return;
-	}
-
-	const listingId = getListingIdFromUrl();
-	if (!listingId) return;
-
-	successEl.classList.add('hidden');
-	errorEl.classList.add('hidden');
-
-	const submitBtn = form.querySelector('button[type="submit"]');
-	if (submitBtn) {
-		submitBtn.disabled = true;
-		submitBtn.textContent = 'Bidding...';
 	}
 
 	try {
-		const url = `${AUCTION}/listings/${encodeURIComponent(listingId)}/bids`;
+		await ensureApiKey();
 
+		const url = `${AUCTION}/listings/${encodeURIComponent(currentListingId)}/bids`;
 		await apiRequest(url, {
 			method: 'POST',
-			body: JSON.stringify({ amount }),
+			body: JSON.stringify({ amount: value }),
 		});
 
-		amountInput.value = '';
+		if (amountInput) {
+			amountInput.value = '';
+		}
 
-		successEl.textContent = 'Bid placed successfully.';
-		successEl.classList.remove('hidden');
+		if (successEl) {
+			successEl.textContent = 'Bid placed successfully.';
+			successEl.classList.remove('hidden');
+		}
+
+		showToast('Bid placed successfully.', 'success');
 
 		
-		const updated = await fetchListing(listingId);
-		renderListing(updated);
+		await loadListing(currentListingId);
 	} catch (err) {
-		errorEl.textContent = 'Could not place bid.';
-		errorEl.classList.remove('hidden');
-	} finally {
-		if (submitBtn) {
-			submitBtn.disabled = false;
-			submitBtn.textContent = 'Place bid';
+		console.error('Place bid error:', err);
+
+		if (errorEl) {
+			if (err && err.status === 400) {
+				errorEl.textContent = err.data?.errors?.[0]?.message || 'Could not place bid.';
+			} else if (err && err.message === 'NETWORK_ERROR') {
+				errorEl.textContent = 'Network error. Please try again.';
+			} else {
+				errorEl.textContent = 'Could not place bid.';
+			}
+			errorEl.classList.remove('hidden');
 		}
 	}
 }
 
+function initSingle() {
+	const id = getListingIdFromUrl('id');
 
-async function initSingle() {
-	const id = getListingIdFromUrl();
 	if (!id) {
-		showMessage('Missing listing id.', 'error');
+		showMessage('Missing listing id in the URL.', 'error');
 		return;
 	}
 
-	showMessage('Loading listing...');
-
-	try {
-		const listing = await fetchListing(id);
-		renderListing(listing);
-		showMessage('');
-	} catch (err) {
-		console.error(err);
-		showMessage('Could not load listing.', 'error');
-	}
+	currentListingId = id;
+	showMessage('Loading listing…', 'info');
+	loadListing(id);
 
 	const form = document.getElementById('bid-form');
 	if (form) {

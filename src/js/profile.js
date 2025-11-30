@@ -1,5 +1,4 @@
-
-import { AUCTION, apiRequest, getUser, ensureApiKey } from './auth.js';
+import { AUCTION, apiRequest, getUser, ensureApiKey, showApiError } from './auth.js';
 
 function setText(id, value) {
 	const el = document.getElementById(id);
@@ -152,9 +151,7 @@ async function loadProfile() {
 
 		const [{ data: profile }, bidsRes] = await Promise.all([
 			apiRequest(`${baseProfileUrl}?_listings=true&_wins=true`),
-			apiRequest(
-				`${baseProfileUrl}/bids?_listings=true&sort=created&sortOrder=desc`,
-			),
+			apiRequest(`${baseProfileUrl}/bids?_listings=true&sort=created&sortOrder=desc`),
 		]);
 
 		setText('profile-name', profile.name || '');
@@ -164,13 +161,11 @@ async function loadProfile() {
 
 		const avatarEl = document.getElementById('profile-avatar');
 		if (avatarEl) {
-			const avatarUrl =
-				profile.avatar?.url || 'https://placehold.co/200x200?text=No+Avatar';
+			const avatarUrl = profile.avatar?.url || 'https://placehold.co/200x200?text=No+Avatar';
 			avatarEl.src = avatarUrl;
 			avatarEl.alt = `${profile.name} avatar`;
 		}
 
-		
 		const bannerBg = document.getElementById('profile-banner-bg');
 		if (bannerBg && profile.banner?.url) {
 			bannerBg.style.backgroundImage = `url("${profile.banner.url}")`;
@@ -183,24 +178,26 @@ async function loadProfile() {
 		const listings = Array.isArray(profile.listings) ? profile.listings : [];
 		setText('profile-stat-listings', String(listings.length));
 
-		const latestListings = [...listings]
-			.sort((a, b) => new Date(b.created) - new Date(a.created))
-			.slice(0, 3);
+		const latestListings = [...listings].sort((a, b) => new Date(b.created) - new Date(a.created)).slice(0, 3);
 
-		renderListingsList(
-			'profile-latest-listings',
-			latestListings,
-			'No listings yet.',
-		);
+		renderListingsList('profile-latest-listings', latestListings, 'No listings yet.');
 
 		const winsArr = Array.isArray(profile.wins) ? profile.wins : [];
-		const winsCount =
-			typeof profile._count?.wins === 'number'
-				? profile._count.wins
-				: winsArr.length;
+		const winsCount = typeof profile._count?.wins === 'number' ? profile._count.wins : winsArr.length;
 		setText('profile-stat-wins', String(winsCount));
 
+		const latestWins = [...winsArr]
+			.sort((a, b) => {
+				const da = a.endsAt ? new Date(a.endsAt) : a.created ? new Date(a.created) : new Date(0);
+				const db = b.endsAt ? new Date(b.endsAt) : b.created ? new Date(b.created) : new Date(0);
+				return db - da;
+			})
+			.slice(0, 3);
+
+		renderListingsList('profile-latest-wins', latestWins, 'No wins yet.');
+
 		const bids = Array.isArray(bidsRes?.data) ? bidsRes.data : [];
+
 		const now = new Date();
 		const activeBidMap = new Map();
 
@@ -213,13 +210,12 @@ async function loadProfile() {
 
 			if (!isActive) continue;
 
-			const current =
-				activeBidMap.get(listing.id) || {
-					id: listing.id,
-					title: listing.title,
-					endsAt: listing.endsAt,
-					userBid: 0,
-				};
+			const current = activeBidMap.get(listing.id) || {
+				id: listing.id,
+				title: listing.title,
+				endsAt: listing.endsAt,
+				userBid: 0,
+			};
 
 			const userAmount = typeof bid.amount === 'number' ? bid.amount : 0;
 			if (userAmount > current.userBid) current.userBid = userAmount;
@@ -236,12 +232,8 @@ async function loadProfile() {
 		if (activeBidItems.length > 0) {
 			const details = await Promise.all(
 				activeBidItems.map(item =>
-					apiRequest(
-						`${AUCTION}/listings/${encodeURIComponent(
-							item.id,
-						)}?_bids=true`,
-					).catch(() => null),
-				),
+					apiRequest(`${AUCTION}/listings/${encodeURIComponent(item.id)}?_bids=true`).catch(() => null)
+				)
 			);
 
 			activeBidItems = activeBidItems.map((item, idx) => {
@@ -251,15 +243,11 @@ async function loadProfile() {
 
 				let highest = 0;
 				for (const b of bidsArr) {
-					const amt =
-						typeof b.amount === 'number' && !Number.isNaN(b.amount)
-							? b.amount
-							: 0;
+					const amt = typeof b.amount === 'number' && !Number.isNaN(b.amount) ? b.amount : 0;
 					if (amt > highest) highest = amt;
 				}
 
-				const isLeading =
-					highest > 0 && item.userBid >= highest; 
+				const isLeading = highest > 0 && item.userBid >= highest;
 
 				return {
 					...item,
@@ -275,7 +263,9 @@ async function loadProfile() {
 		if (msgEl) msgEl.textContent = '';
 	} catch (error) {
 		console.error('Profile page error:', error);
-		if (msgEl) msgEl.textContent = 'Could not load profile.';
+		
+		const main = document.querySelector('main');
+		showApiError(main, 'Could not load your profile. Please try again.');
 	}
 }
 

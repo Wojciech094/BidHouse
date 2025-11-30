@@ -1,5 +1,3 @@
-
-
 const API = 'https://v2.api.noroff.dev/auth';
 
 function showMsg(el, msg, type = 'error') {

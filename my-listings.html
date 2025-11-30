@@ -3,13 +3,14 @@
 
 <head>
     <meta charset="UTF-8" />
+    <title>My listings | BidHouse</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="src/style.css" />
-    <title>My Profile | BidHouse</title>
 </head>
 
 <body class="flex flex-col min-h-screen bg-zinc-100 text-zinc-900">
 
+  
     <header class="sticky top-0 z-30 border-b border-zinc-200 bg-white/90 backdrop-blur-sm">
         <div class="flex items-center justify-between max-w-6xl px-4 py-3 mx-auto">
 
@@ -31,7 +32,6 @@
             </nav>
 
             <div class="flex items-center gap-3 text-sm">
-
                 <button id="notif-btn" type="button"
                     class="relative inline-flex items-center justify-center p-2 border rounded-full border-zinc-300 text-zinc-800 hover:border-amber-500 hover:text-amber-700">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-5 h-5">
@@ -76,13 +76,11 @@
                             <p id="menu-username" class="text-sm font-semibold text-zinc-900">User</p>
                             <p id="menu-email" class="text-xs truncate text-zinc-500">user@stud.noroff.no</p>
 
-                        <p class="flex items-center gap-1 mt-1 text-xs text-zinc-700">
-                            <span>Credits:</span>
-                            <span id="menu-credits" class="font-semibold">—</span>
-                            <img src="/credits.svg" alt="Credits icon" class="w-4 h-4" />
-                        </p>
-
-                            
+                            <p class="flex items-center gap-1 mt-1 text-xs text-zinc-700">
+                                <span>Credits:</span>
+                                <span id="menu-credits" class="font-semibold">—</span>
+                                <img src="/credits.svg" alt="Credits icon" class="w-4 h-4" />
+                            </p>
                         </div>
 
                         <div class="py-1">
@@ -121,122 +119,32 @@
     </header>
 
     <main class="flex-1">
-        <section class="max-w-5xl px-4 py-10 mx-auto space-y-8">
-
-            <button onclick="window.location.href='index.html'"
+        <section class="max-w-6xl px-4 py-10 mx-auto space-y-6">
+            <button onclick="window.location.href='profile.html'"
                 class="inline-flex items-center gap-1 px-4 py-2 mb-4 text-sm bg-white border rounded-full shadow-sm text-zinc-700 hover:text-amber-700 hover:border-amber-500 border-zinc-300">
                 <span class="text-lg">←</span>
-                Back to Home
+                Back to profile
             </button>
 
-            <h1 class="text-2xl font-semibold">My Profile</h1>
-
-       
-            <section class="relative overflow-hidden border shadow-sm rounded-3xl border-zinc-200">
-              
-                <div id="profile-banner-bg" class="absolute inset-0 bg-center bg-cover"></div>
-
-             
-                <div
-                    class="relative max-w-md px-6 py-6 mx-auto mt-10 mb-10 text-center shadow-lg rounded-3xl backdrop-blur-md bg-white/60 text-zinc-900">
-                 
-                    <div class="flex justify-center mb-4">
-                        <img id="profile-avatar" class="object-cover w-24 h-24 border-4 border-white rounded-full shadow-md bg-zinc-200" src=""
-                            alt="Avatar" loading="lazy" />
-
-                    </div>
-
-                
-                    <p id="profile-name" class="text-xl font-semibold">Loading…</p>
-
-                  
-                    <p id="profile-email" class="text-sm text-zinc-800/80"></p>
-
-                  
-                <p class="flex items-center justify-center gap-1 mt-2 text-sm">
-                    <span class="font-semibold">Credits:</span>
-                
-                    <span class="flex items-center gap-1">
-                        <span id="profile-credits">—</span>
-                        <img src="/credits.svg" class="w-4 h-4 opacity-80" alt="Credits icon" />
-                    </span>
-                </p>
-
-                 
-                    <p id="profile-bio" class="mt-3 text-sm text-zinc-900"></p>
-
-                   
-                    <div class="mt-4">
-                        <a href="./edit-profile.html"
-                            class="inline-flex items-center px-5 py-2 text-sm font-semibold text-white rounded-full bg-amber-600 hover:bg-amber-500">
-                            Edit profile
-                        </a>
-                    </div>
-
-                    <p id="profile-message" class="mt-3 text-xs text-red-600"></p>
-                </div>
-            </section>
-
-            <section class="grid gap-4 md:grid-cols-3">
-                <article class="p-4 bg-white border rounded-2xl border-zinc-200">
-                    <p class="text-[11px] font-semibold tracking-[0.16em] uppercase text-zinc-500">Active bids</p>
-                    <p id="profile-stat-active" class="mt-2 text-2xl font-semibold text-zinc-900">0</p>
-                </article>
-
-                <article class="p-4 bg-white border rounded-2xl border-zinc-200">
-                    <p class="text-[11px] font-semibold tracking-[0.16em] uppercase text-zinc-500">Total listings</p>
-                    <p id="profile-stat-listings" class="mt-2 text-2xl font-semibold text-zinc-900">0</p>
-                </article>
-
-                <article class="p-4 bg-white border rounded-2xl border-zinc-200">
-                    <p class="text-[11px] font-semibold tracking-[0.16em] uppercase text-zinc-500">Wins</p>
-                    <p id="profile-stat-wins" class="mt-2 text-2xl font-semibold text-zinc-900">0</p>
-                </article>
-            </section>
-
-            <section class="p-5 bg-white border rounded-2xl border-zinc-200">
-                <h2 class="mb-3 text-sm font-semibold text-zinc-900">Quick actions</h2>
-                <div class="flex flex-wrap gap-3 text-xs">
-                    <a href="./create.html"
-                        class="inline-flex items-center px-4 py-2 font-medium text-white rounded-full bg-amber-600 hover:bg-amber-500">
-                        + Create listing
-                    </a>
-                    <a href="./my-listings.html"
-                        class="inline-flex items-center px-4 py-2 font-medium bg-white border rounded-full border-zinc-300 text-zinc-800 hover:border-amber-500 hover:text-amber-700">
+            <div class="flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
+                <div>
+                    <p class="text-[11px] font-semibold tracking-[0.28em] uppercase text-amber-700">
                         My listings
-                    </a>
-                    <a href="./my-bids.html"
-                        class="inline-flex items-center px-4 py-2 font-medium bg-white border rounded-full border-zinc-300 text-zinc-800 hover:border-amber-500 hover:text-amber-700">
-                        My bids
-                    </a>
-                    <a href="./my-wins.html"
-                        class="inline-flex items-center px-4 py-2 font-medium bg-white border rounded-full border-zinc-300 text-zinc-800 hover:border-amber-500 hover:text-amber-700">
-                        My wins
-                    </a>
+                    </p>
+                    <h1 class="mt-1 text-2xl font-semibold text-zinc-900">Listings I created</h1>
+                    <p id="my-listings-message" class="mt-1 text-sm text-zinc-500">
+                        Loading your listings…
+                    </p>
                 </div>
-            </section>
 
-            <section class="p-5 bg-white border rounded-2xl border-zinc-200">
-                <h2 class="mb-3 text-sm font-semibold text-zinc-900">Active bids (auctions you're bidding on)</h2>
-                <ul id="profile-active-bids" class="space-y-3 text-sm text-zinc-800">
-                    
-                </ul>
-            </section>
+                <a href="./create.html"
+                    class="inline-flex items-center px-4 py-2 text-xs font-medium text-white rounded-full bg-amber-600 hover:bg-amber-500">
+                    + Create new listing
+                </a>
+            </div>
 
-            <section class="grid gap-4 md:grid-cols-2">
-                <article class="p-5 bg-white border rounded-2xl border-zinc-200">
-                    <h2 class="mb-3 text-sm font-semibold text-zinc-900">Latest listings</h2>
-                    <ul id="profile-latest-listings" class="space-y-2 text-xs text-zinc-700">
-                      
-                    </ul>
-                </article>
-
-                <article class="p-5 bg-white border rounded-2xl border-zinc-200">
-                    <h2 class="mb-3 text-sm font-semibold text-zinc-900">Latest wins</h2>
-                    <ul id="profile-latest-wins" class="space-y-2 text-xs text-zinc-700">
-                      
-                    </ul>
-                </article>
+            <section id="my-listings-grid" class="grid gap-4 mt-4 sm:grid-cols-2 lg:grid-cols-3">
+             
             </section>
         </section>
     </main>
@@ -252,7 +160,7 @@
     </script>
 
     <script type="module" src="/src/js/auth.js"></script>
-    <script type="module" src="/src/js/profile.js"></script>
+    <script type="module" src="/src/js/my-listings.js"></script>
 </body>
 
 </html>

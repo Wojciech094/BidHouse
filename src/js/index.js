@@ -1,3 +1,5 @@
+import { showApiError } from './auth.js';
+
 const API_BASE = 'https://v2.api.noroff.dev';
 const AUCTION = `${API_BASE}/auction`;
 
@@ -142,7 +144,6 @@ function mapSort(value) {
 		case 'endingLast':
 			return { mode: 'server', sort: 'endsAt', sortOrder: 'desc' };
 
-		
 		case 'priceHigh':
 			return { mode: 'priceHigh' };
 		case 'priceLow':
@@ -157,9 +158,11 @@ function createFeaturedCard(listing) {
 	const li = document.createElement('article');
 	li.className = 'relative flex flex-col overflow-hidden bg-white border shadow-sm rounded-2xl border-zinc-200';
 	li.dataset.card = 'listing';
+	li.dataset.sellerName = listing.seller?.name || '';
 
 	const imgUrl =
-		(listing.media && listing.media[0] && listing.media[0].url) || 'https://placehold.co/600x400?text=No+image';
+		(listing.media && listing.media[0] && listing.media[0].url) || 'https://placehold.co/600x400?text=No image';
+
 	const imgAlt = (listing.media && listing.media[0] && listing.media[0].alt) || listing.title || 'Listing image';
 
 	const linkHref = `./single.html?id=${encodeURIComponent(listing.id)}`;
@@ -169,6 +172,7 @@ function createFeaturedCard(listing) {
       <img
         src="${imgUrl}"
         alt="${imgAlt}"
+		loading="lazy"
         class="object-cover w-full h-48 transition-transform duration-300 hover:scale-[1.03]"
       />
       <div
@@ -288,7 +292,6 @@ async function fetchFeaturedListings({ page, query, tag, activeOnly, sortChoice 
 	}
 
 	const url = `${baseUrl}?${params.toString()}`;
-	
 
 	const { data, meta } = await apiRequest(url);
 	let sortedData = Array.isArray(data) ? [...data] : [];
@@ -361,9 +364,10 @@ async function loadFeaturedFirstPage() {
 	} catch (error) {
 		console.error(error);
 		if (featuredGrid) {
-			featuredGrid.innerHTML = '<p class="col-span-full text-xs text-center text-red-500">Could not load listings.</p>';
+			showApiError(featuredGrid, 'Could not load listings. Please try again.');
 		}
 	}
+
 }
 
 async function loadFeaturedNextPage() {
@@ -421,7 +425,9 @@ async function loadEndingSoon() {
 		endingSoonGrid.appendChild(fragment);
 	} catch (error) {
 		console.error(error);
-		endingSoonGrid.innerHTML = '<p class="text-sm text-center col-span-full text-red-500">Could not load auctions.</p>';
+		if (endingSoonGrid) {
+			showApiError(endingSoonGrid, 'Could not load auctions. Please try again.');
+		}
 	}
 }
 
@@ -445,7 +451,6 @@ async function placeBid(listingId, rawAmount) {
 }
 
 function setupBidding() {
-	
 	document.addEventListener('submit', async e => {
 		const form = e.target;
 		if (!(form instanceof HTMLFormElement)) return;
@@ -462,6 +467,21 @@ function setupBidding() {
 		const errorEl = card.querySelector('[data-bid-error]');
 
 		if (!listingId || !(amountInput instanceof HTMLInputElement)) return;
+
+		const user = getUser();
+		const sellerName = card.dataset.sellerName || '';
+
+		if (user && sellerName && user.name === sellerName) {
+			if (errorEl) {
+				errorEl.classList.remove('hidden');
+				errorEl.textContent = 'You cannot bid on your own listing.';
+			}
+			if (successEl) {
+				successEl.classList.add('hidden');
+				successEl.textContent = '';
+			}
+			return;
+		}
 
 		const rawAmount = amountInput.value.trim();
 		const numericAmount = Number(rawAmount);
@@ -544,7 +564,6 @@ function initSearchAndFeatured() {
 		loadFeaturedFirstPage();
 	};
 
-	
 	applyFormState();
 
 	if (searchForm) {

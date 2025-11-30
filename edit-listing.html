@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Edit listing | BidHouse</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="src/style.css" />
+</head>
+
+<body class="flex flex-col min-h-screen bg-zinc-100 text-zinc-900">
+
+    <header class="sticky top-0 z-30 border-b border-zinc-200 bg-white/90 backdrop-blur-sm">
+       
+    </header>
+
+    <main class="flex-1">
+        <section class="max-w-lg px-4 py-10 mx-auto">
+
+            <button onclick="window.location.href='my-listings.html'"
+                class="inline-flex items-center gap-1 px-4 py-2 mb-6 text-sm bg-white border rounded-full shadow-sm text-zinc-700 hover:text-amber-700 hover:border-amber-500 border-zinc-300">
+                <span class="text-lg">←</span>
+                Back to my listings
+            </button>
+
+            <h1 class="mb-6 text-2xl font-semibold">Edit listing</h1>
+
+            <form id="edit-listing-form" class="p-6 space-y-4 bg-white border shadow-sm rounded-2xl border-zinc-200">
+
+                <p id="edit-listing-message" class="text-sm min-h-6"></p>
+
+                <div>
+                    <label class="block mb-1 text-sm text-zinc-800">Title</label>
+                    <input id="edit-title" type="text" required minlength="3"
+                        class="w-full px-3 py-2 text-sm border bg-zinc-50 border-zinc-300 rounded-xl focus:ring-2 focus:ring-amber-500" />
+                </div>
+
+                <div>
+                    <label class="block mb-1 text-sm text-zinc-800">Description</label>
+                    <textarea id="edit-description" rows="4"
+                        class="w-full px-3 py-2 text-sm border bg-zinc-50 border-zinc-300 rounded-xl focus:ring-2 focus:ring-amber-500"></textarea>
+                </div>
+
+                <div>
+                    <label class="block mb-1 text-sm text-zinc-800">Media URL</label>
+                    <input id="edit-media" type="url"
+                        class="w-full px-3 py-2 text-sm border bg-zinc-50 border-zinc-300 rounded-xl focus:ring-2 focus:ring-amber-500" />
+                </div>
+
+                <div>
+                    <label class="block mb-1 text-sm text-zinc-800">Ends at</label>
+                    <input id="edit-endsAt" type="datetime-local" required
+                        class="w-full px-3 py-2 text-sm border bg-zinc-50 border-zinc-300 rounded-xl focus:ring-2 focus:ring-amber-500" />
+                </div>
+
+                <button type="submit"
+                    class="w-full bg-amber-600 text-white py-2.5 rounded-full text-sm font-semibold hover:bg-amber-500">
+                    Save changes
+                </button>
+            </form>
+        </section>
+    </main>
+
+    <footer class="mt-auto text-xs bg-white border-t border-zinc-200 text-zinc-500">
+        <div class="max-w-6xl px-4 py-6 mx-auto">
+            <p>© <span id="year"></span> BidHouse. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.getElementById('year').textContent = new Date().getFullYear();
+    </script>
+
+    <script type="module" src="/src/js/auth.js"></script>
+    <script type="module" src="/src/js/edit-listing.js"></script>
+</body>
+
+</html>

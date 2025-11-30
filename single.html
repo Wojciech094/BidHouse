@@ -95,7 +95,7 @@
                     <div class="py-1">
                         <a href="./profile.html" class="block px-4 py-2 hover:bg-zinc-50">My account</a>
                         <a href="./profile.html" class="block px-4 py-2 hover:bg-zinc-50">Edit profile</a>
-                        <a href="./create-listing.html" class="block px-4 py-2 hover:bg-zinc-50">Create listing</a>
+                        <a href="./create.html" class="block px-4 py-2 hover:bg-zinc-50">Create listing</a>
                         <a href="./my-listings.html" class="block px-4 py-2 hover:bg-zinc-50">My listings</a>
                         <a href="./my-bids.html" class="block px-4 py-2 hover:bg-zinc-50">My bids</a>
                         <a href="./my-wins.html" class="block px-4 py-2 hover:bg-zinc-50">My wins</a>
@@ -164,7 +164,8 @@
 
                         
                         <div class="lg:w-1/2">
-                            <img id="single-image" src="" alt="" class="h-[460px] w-full object-cover bg-zinc-100" />
+                        <img id="single-image" src="" alt="" loading="lazy" class="h-[460px] w-full object-cover bg-zinc-100" />
+
                         </div>
 
                        
@@ -220,8 +221,11 @@
                                 <p id="bid-error" class="mt-2 text-[11px] text-red-600 hidden">
                                     Could not place bid.
                                 </p>
+                                
                             </section>
-
+<p id="single-own-listing-note" class="hidden mt-4 text-[11px] text-zinc-500 text-center">
+    You are the seller of this listing. You cannot bid on your own listing.
+</p>
                         </div>
                     </div>
                 </article>

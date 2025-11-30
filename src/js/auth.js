@@ -1,5 +1,8 @@
 const API_BASE = 'https://v2.api.noroff.dev';
 export const AUCTION = `${API_BASE}/auction`;
+
+const LAST_SEEN_WINS_KEY = 'lastSeenWinsCount';
+
 export function getUser() {
 	try {
 		return JSON.parse(localStorage.getItem('user'));
@@ -65,17 +68,48 @@ export async function apiRequest(path, options = {}) {
 	if (token) headers.Authorization = `Bearer ${token}`;
 	if (apiKey) headers['X-Noroff-API-Key'] = apiKey;
 
-	const res = await fetch(path, {
-		...options,
-		headers,
-	});
+	let res;
 
-	if (!res.ok) {
-		console.error('API error', res.status, path);
-		throw new Error('API request failed');
+	try {
+		res = await fetch(path, {
+			...options,
+			headers,
+		});
+	} catch (networkError) {
+		console.error('Network error', networkError);
+		const err = new Error('NETWORK_ERROR');
+		err.cause = networkError;
+		throw err;
 	}
 
-	return res.json();
+
+	const hasBody = res.status !== 204 && res.status !== 205;
+
+	let data = null;
+	if (hasBody) {
+		try {
+			data = await res.json();
+		} catch {
+			
+			data = null;
+		}
+	}
+
+	if (!res.ok) {
+		console.error('API error', res.status, path, data);
+		const msgFromApi =
+			data?.errors?.[0]?.message ||
+			data?.message ||
+			(res.status === 404 ? 'Requested resource was not found.' : 'Request failed.');
+
+		const err = new Error(msgFromApi);
+		err.status = res.status;
+		err.data = data;
+		throw err;
+	}
+
+	
+	return data ?? {};
 }
 
 
@@ -123,17 +157,44 @@ async function fetchProfileSummary(name) {
 function setupUserMenuToggle() {
 	const btn = document.getElementById('user-menu-button');
 	const menu = document.getElementById('user-menu');
+
 	if (!btn || !menu) return;
 
+	
+	btn.setAttribute('aria-expanded', 'false');
+
+	function openMenu() {
+		menu.classList.remove('hidden');
+		btn.setAttribute('aria-expanded', 'true');
+	}
+
+	function closeMenu() {
+		menu.classList.add('hidden');
+		btn.setAttribute('aria-expanded', 'false');
+	}
+
+	
 	btn.addEventListener('click', e => {
 		e.stopPropagation();
-		menu.classList.toggle('hidden');
+		const isHidden = menu.classList.contains('hidden');
+		isHidden ? openMenu() : closeMenu();
 	});
 
+	
 	document.addEventListener('click', e => {
 		if (!menu.classList.contains('hidden')) {
-			const inside = menu.contains(e.target) || btn.contains(e.target);
-			if (!inside) menu.classList.add('hidden');
+			const clickedInside = menu.contains(e.target);
+			const clickedButton = btn.contains(e.target);
+			if (!clickedInside && !clickedButton) {
+				closeMenu();
+			}
+		}
+	});
+
+	
+	document.addEventListener('keydown', e => {
+		if (e.key === 'Escape' && !menu.classList.contains('hidden')) {
+			closeMenu();
 		}
 	});
 }
@@ -149,16 +210,36 @@ function setupLogoutButtons() {
 			localStorage.removeItem('token');
 			localStorage.removeItem('user');
 			localStorage.removeItem('apiKey');
+			
 			window.location.href = './index.html';
 		});
 	});
 }
 
-function setupNotifButton() {
+export function showApiError(container, message = 'Could not load data. Please try again.') {
+	if (!container) return;
+	container.innerHTML = `
+		<div class="p-4 mt-4 text-center text-sm text-red-600 bg-red-50 border border-red-200 rounded-xl">
+			${message}
+		</div>
+	`;
+}
+
+function setupNotifButton(getCurrentWinsCount) {
 	const btn = document.getElementById('notif-btn');
 	if (!btn) return;
 
 	btn.addEventListener('click', () => {
+		const currentWins = typeof getCurrentWinsCount === 'function' ? Number(getCurrentWinsCount()) || 0 : 0;
+
+		localStorage.setItem(LAST_SEEN_WINS_KEY, String(currentWins));
+
+		const notifBadge = document.getElementById('notif-badge');
+		if (notifBadge) {
+			notifBadge.classList.add('hidden');
+			notifBadge.textContent = '0';
+		}
+
 		window.location.href = './my-wins.html';
 	});
 }
@@ -182,13 +263,12 @@ export async function setupHeader() {
 
 	if (!loggedOut || !loggedIn) return;
 
-		if (!user || !token) {
+	if (!user || !token) {
 		loggedIn.classList.add('hidden');
 		loggedOut.classList.remove('hidden');
 		return;
 	}
 
-	
 	loggedOut.classList.add('hidden');
 	loggedIn.classList.remove('hidden');
 
@@ -199,14 +279,12 @@ export async function setupHeader() {
 	if (menuUsername) menuUsername.textContent = name;
 	if (menuEmail) menuEmail.textContent = email;
 
-
 	if (chipEl) {
 		chipEl.style.backgroundImage = '';
 		chipEl.style.backgroundColor = 'white';
 		chipEl.style.backdropFilter = '';
 	}
 
-	
 	if (avatarEl) {
 		const initials = name
 			.split(' ')
@@ -219,11 +297,13 @@ export async function setupHeader() {
 		avatarEl.innerHTML = initials;
 	}
 
+	
+	let lastWinCount = 0;
+
 	setupUserMenuToggle();
 	setupLogoutButtons();
-	setupNotifButton();
-
-	let lastWinCount = 0;
+	
+	setupNotifButton(() => lastWinCount);
 
 	async function checkWinsLive() {
 		const user = getUser();
@@ -241,14 +321,16 @@ export async function setupHeader() {
 				return;
 			}
 
-			
-			if (winsCount > lastWinCount) {
-				showToast('🎉 You won a new auction!', 'success');
+			const lastSeenStr = localStorage.getItem(LAST_SEEN_WINS_KEY);
+			const lastSeen = lastSeenStr ? Number(lastSeenStr) : 0;
 
-				const notifBadge = document.getElementById('notif-badge');
-				if (notifBadge) {
-					notifBadge.textContent = winsCount > 9 ? '9+' : winsCount;
-					notifBadge.classList.remove('hidden');
+			if (winsCount > lastWinCount && winsCount > lastSeen) {
+				showToast(' You won a new auction!', 'success');
+
+				const badge = document.getElementById('notif-badge');
+				if (badge) {
+					badge.textContent = winsCount > 9 ? '9+' : String(winsCount);
+					badge.classList.remove('hidden');
 				}
 			}
 
@@ -264,11 +346,9 @@ export async function setupHeader() {
 		const profile = await fetchProfileSummary(name);
 		if (!profile) return;
 
-		
 		const credits = typeof profile.credits === 'number' ? profile.credits : 0;
 		if (menuCredits) menuCredits.textContent = String(credits);
 
-		
 		const winsCount =
 			typeof profile._count?.wins === 'number'
 				? profile._count.wins
@@ -276,9 +356,14 @@ export async function setupHeader() {
 				? profile.wins.length
 				: 0;
 
+		lastWinCount = winsCount;
+
+		const lastSeenStr = localStorage.getItem(LAST_SEEN_WINS_KEY);
+		const lastSeen = lastSeenStr ? Number(lastSeenStr) : 0;
+		const hasUnseenWins = winsCount > lastSeen;
+
 		if (notifBadge) {
-			if (winsCount > 0) {
-				
+			if (hasUnseenWins) {
 				notifBadge.textContent = winsCount > 9 ? '9+' : String(winsCount);
 				notifBadge.classList.remove('hidden');
 			} else {
@@ -300,6 +385,7 @@ export async function setupHeader() {
 		console.error('Header summary failed:', err);
 	}
 }
+
 
 document.addEventListener('DOMContentLoaded', () => {
 	setupHeader();
