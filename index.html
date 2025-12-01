@@ -11,33 +11,37 @@
 <body class="flex flex-col min-h-screen bg-zinc-100 text-zinc-900">
 
 
-<header class="sticky top-0 z-30 border-b border-zinc-200 bg-white/90 backdrop-blur-sm">
+<header class="sticky top-0 z-30 border-b border-zinc-200 bg-white/95 backdrop-blur-sm">
   <div id="toast-container" class="fixed space-y-2 top-4 right-4 z-999"></div>
+
   <div class="flex items-center justify-between max-w-6xl px-4 py-3 mx-auto">
 
- 
-    <div class="flex items-center gap-2">
+  
+    <a href="./index.html" class="flex items-center gap-2">
       <span
-        class="inline-flex items-center justify-center w-8 h-8 text-xs font-semibold text-white rounded-full bg-linear-to-br from-amber-500 to-amber-600">
+        class="inline-flex items-center justify-center w-8 h-8 text-xs font-semibold text-white rounded-sm bg-zinc-900">
         BH
       </span>
       <span class="text-sm font-semibold tracking-[0.25em] text-zinc-900 uppercase">
         BidHouse
       </span>
-    </div>
+    </a>
 
-  
+   
     <nav class="hidden gap-6 text-sm text-zinc-700 md:flex">
-      <a href="#featured" class="hover:text-amber-700">Auctions</a>
-      <a href="#ending-soon" class="hover:text-amber-700">Ending soon</a>
-      <a href="#featured" class="hover:text-amber-700">Featured</a>
-      <a href="#about" class="hover:text-amber-700">About</a>
+      <a href="#featured" class="hover:text-zinc-900">Auctions</a>
+      <a href="#ending-soon" class="hover:text-zinc-900">Ending soon</a>
+      <a href="#browse" class="hover:text-zinc-900">Browse</a>
+      <a href="#about" class="hover:text-zinc-900">About</a>
+      <a href="./contact.html" class="hover:text-zinc-900">Contact</a>
     </nav>
 
+  
     <div class="flex items-center gap-3 text-sm">
 
+    
       <button id="notif-btn" type="button"
-        class="relative inline-flex items-center justify-center p-2 border rounded-full border-zinc-300 text-zinc-800 hover:border-amber-500 hover:text-amber-700">
+        class="relative inline-flex items-center justify-center p-2 border rounded-full border-zinc-300 text-zinc-800 hover:border-zinc-400">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-5 h-5">
           <path
             d="M12 2a6 6 0 0 0-6 6v2.586l-.707 1.707A1 1 0 0 0 6.2 14h11.6a1 1 0 0 0 .907-1.707L18 10.586V8a6 6 0 0 0-6-6zM10 18a2 2 0 1 0 4 0h-4z" />
@@ -52,45 +56,38 @@
   
       <div id="auth-logged-out" class="flex items-center gap-3">
         <a href="./login.html"
-          class="hidden md:inline-flex rounded-full border border-zinc-300 px-4 py-1.5 text-zinc-800 hover:border-amber-500 hover:text-amber-700 text-sm">
-          Log in
-        </a>
-
-        <a href="./register.html"
-          class="inline-flex items-center rounded-full bg-amber-600 px-4 py-1.5 font-medium text-white hover:bg-amber-500 text-sm">
-          Create account
+          class="inline-flex items-center justify-center rounded-md bg-[#4A3325] px-5 py-1.5 text-sm font-medium text-white hover:bg-[#3c281d]">
+          Sign In
         </a>
       </div>
 
-     
+    
       <div id="auth-logged-in" class="relative items-center hidden gap-3">
 
         <button id="user-menu-button" type="button" class="focus:outline-none">
           <div id="user-chip"
-            class="inline-flex items-center gap-2 px-3 py-1 text-xs border rounded-full shadow-sm border-zinc-200 bg-zinc-50 text-zinc-700">
+            class="inline-flex items-center gap-2 px-3 py-1 text-xs bg-white border rounded-full shadow-sm border-zinc-200 text-zinc-700">
             <span id="user-avatar"
-              class="flex h-6 w-6 items-center justify-center rounded-full bg-linear-to-br from-amber-500 to-amber-600 text-[10px] font-semibold text-white">
+              class="flex h-6 w-6 items-center justify-center rounded-full bg-zinc-900 text-[10px] font-semibold text-white overflow-hidden">
               U
             </span>
-            <span id="user-name" class="font-medium"></span>
+            <span id="user-name" class="text-sm font-medium"></span>
           </div>
         </button>
 
-   
+       
         <div id="user-menu"
-          class="absolute right-0 hidden w-56 py-2 mt-2 text-sm bg-white border shadow-lg rounded-xl border-zinc-200 shadow-zinc-200/70">
+          class="absolute right-0 hidden w-56 py-2 mt-2 text-sm bg-white border shadow-lg top-full rounded-xl border-zinc-200 shadow-zinc-200/70">
 
-          <div class="px-4 pb-3 border-b border-zinc-100">
+          <div class="px-4 pt-2 pb-3 border-b border-zinc-100">
             <p id="menu-username" class="text-sm font-semibold text-zinc-900">User</p>
             <p id="menu-email" class="text-xs truncate text-zinc-500">user@stud.noroff.no</p>
 
-        <p class="flex items-center gap-1 mt-1 text-xs text-zinc-700">
-          <span>Credits:</span>
-          <span id="menu-credits" class="font-semibold">—</span>
-          <img src="/credits.svg" alt="Credits icon" class="w-4 h-4" />
-        </p>
-
-           
+            <p class="flex items-center gap-1 mt-1 text-xs text-zinc-700">
+              <span>Credits:</span>
+              <span id="menu-credits" class="font-semibold">—</span>
+              <img src="/credits.svg" alt="Credits icon" class="w-4 h-4" />
+            </p>
           </div>
 
           <div class="py-1">
@@ -111,8 +108,8 @@
         </div>
       </div>
 
-
-      <button id="mobile-menu-toggle" class="md:hidden text-zinc-700 hover:text-amber-700">
+   
+      <button id="mobile-menu-toggle" class="md:hidden text-zinc-700 hover:text-zinc-900">
         <span data-icon="open" class="text-2xl leading-none">☰</span>
         <span data-icon="close" class="hidden text-2xl leading-none">x</span>
       </button>
@@ -124,131 +121,136 @@
     <nav class="max-w-6xl px-4 pt-3 pb-4 mx-auto space-y-3 text-sm text-zinc-800">
       <a href="#featured" class="block py-1 hover:text-amber-700">Auctions</a>
       <a href="#ending-soon" class="block py-1 hover:text-amber-700">Ending soon</a>
-      <a href="#featured" class="block py-1 hover:text-amber-700">Featured</a>
+      <a href="#browse" class="block py-1 hover:text-amber-700">Browse</a>
       <a href="#about" class="block py-1 hover:text-amber-700">About</a>
-
+      <a href="./contact.html" class="block py-1 hover:text-amber-700">Contact</a>
     </nav>
   </div>
 </header>
 
-
-
   <main>
 
 
-    <section class="bg-white border-b border-zinc-200">
-      <div class="max-w-6xl px-4 py-8 mx-auto space-y-6">
-        <div class="flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
-          <div>
-            <p class="text-[11px] font-semibold tracking-[0.28em] uppercase text-amber-700">
-              Browse Auctions
-            </p>
-            <h2 class="mt-1 text-xl font-semibold text-zinc-900">
-              All Listings
-            </h2>
-            <p class="mt-1 text-xs text-zinc-500">
-              Search across all active listings in the marketplace.
-            </p>
-          </div>
-        </div>
-
-        <form id="search-form" class="flex flex-wrap items-center gap-3 mb-6 text-xs md:text-sm">
-
-          <input id="search-input" type="search" placeholder="Search listings..."
-            class="flex-1 min-w-[180px] rounded-full border border-zinc-300 px-3 py-1.5 text-xs md:text-sm text-zinc-800 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500/60" />
-
-
-          <select id="tag-filter"
-            class="rounded-full border border-zinc-300 bg-white px-3 py-1.5 text-xs md:text-sm text-zinc-800 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500/60">
-            <option value="">All tags</option>
-            <option value="electronics">Electronics</option>
-            <option value="games">Games</option>
-            <option value="art">Art</option>
-          </select>
-
-
-          <select id="sort-select"
-            class="rounded-full border border-zinc-300 bg-white px-3 py-1.5 text-xs md:text-sm text-zinc-800 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500/60">
-            <option value="newest">Newest</option>
-            <option value="oldest">Oldest</option>
-            <option value="endingSoon">Ending soon</option>
-            <option value="endingLast">Ending last</option>
-            <option value="priceHigh">Most expensive</option>
-            <option value="priceLow">Cheapest</option>
-          </select>
-
-
-          <label class="inline-flex items-center gap-1 text-[11px] md:text-xs text-zinc-700">
-            <input id="active-only" type="checkbox" checked
-              class="w-3 h-3 rounded border-zinc-300 text-amber-600 focus:ring-amber-500/60" />
-            Only active
-          </label>
-
-
-          <button type="submit"
-            class="inline-flex items-center rounded-full bg-amber-600 px-4 py-1.5 text-[11px] md:text-xs font-semibold text-white hover:bg-amber-500">
-            Search
-          </button>
-        </form>
+ 
+  <section class="bg-[#0b1624] text-zinc-50">
+    <div class="max-w-6xl px-4 py-16 mx-auto space-y-6 text-center">
+      <h1 class="text-3xl font-semibold tracking-tight sm:text-4xl md:text-5xl">
+        Discover Exceptional
+      </h1>
+      <p class="text-sm sm:text-base text-zinc-300">
+        Northern Europe's premier auction house
+      </p>
+  
+      <div class="flex flex-wrap justify-center gap-4 pt-2">
+        <a href="#featured"
+          class="inline-flex items-center justify-center rounded-md bg-[#4A3325] px-6 py-2 text-sm font-medium text-white hover:bg-[#3c281d]">
+          Browse Auctions
+        </a>
+        <a href="./create.html"
+          class="inline-flex items-center justify-center rounded-md bg-[#C49A6C] px-6 py-2 text-sm font-medium text-white hover:bg-[#b28754]">
+          Create listing
+        </a>
       </div>
-    </section>
+    </div>
+  </section>
+  
+
+<section id="browse" class="bg-[#f5f1e9] border-b border-zinc-200">
+  <div class="max-w-6xl px-4 py-10 mx-auto space-y-6">
+
+    <div>
+      <p class="text-[11px] font-semibold tracking-[0.28em] uppercase text-amber-700">
+        Browse auctions
+      </p>
+      <h2 class="mt-1 text-xl font-semibold text-zinc-900">
+        All listings
+      </h2>
+      <p class="mt-1 text-xs text-zinc-500">
+        Search across all active listings in the marketplace.
+      </p>
+    </div>
 
 
-    <section class="bg-linear-to-b from-zinc-50 via-zinc-100 to-zinc-100">
-      <div class="flex flex-col max-w-6xl gap-10 px-4 py-16 mx-auto lg:flex-row lg:py-20">
-        <div class="flex-1 space-y-6">
-          <p class="text-[11px] font-semibold tracking-[0.32em] uppercase text-amber-700">
-            Fine Art & Collectibles
-          </p>
+    <div class="rounded-full bg-white shadow-md border border-zinc-200 px-4 py-1.5">
+      <form id="search-form" class="flex flex-wrap items-center gap-3 text-xs md:text-sm">
 
-          <h1 class="text-3xl font-light tracking-tight sm:text-4xl lg:text-5xl text-zinc-900">
-            Discover Exceptional
-          </h1>
+ 
+        <input id="search-input" type="search" placeholder="Search listings..."
+          class="flex-1 min-w-[180px] border-0 bg-transparent text-xs md:text-sm text-zinc-800 placeholder:text-zinc-400 focus:outline-none focus:ring-0" />
 
-          <p class="max-w-xl text-sm text-zinc-600">
-            BidHouse connects discerning collectors with carefully curated lots from trusted auction houses.
-          </p>
 
-          <div class="flex flex-wrap gap-3">
-            <a href="#featured"
-              class="inline-flex items-center px-5 py-2 text-sm font-semibold text-white rounded-full bg-amber-600 hover:bg-amber-500">
-              Explore lots
-            </a>
+        <select id="tag-filter"
+          class="rounded-full border border-zinc-200 bg-white px-3 py-1.5 text-xs md:text-sm text-zinc-800 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500/60">
+          <option value="">All tags</option>
+          <option value="electronics">Electronics</option>
+          <option value="games">Games</option>
+          <option value="art">Art</option>
+        </select>
 
-            <a href="#ending-soon"
-              class="inline-flex items-center px-5 py-2 text-sm font-semibold bg-white border rounded-full border-zinc-300 text-zinc-800 hover:border-amber-500 hover:text-amber-700">
-              View ending soon
-            </a>
-          </div>
-        </div>
+    
+        <select id="sort-select"
+          class="rounded-full border border-zinc-200 bg-white px-3 py-1.5 text-xs md:text-sm text-zinc-800 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500/60">
+          <option value="newest">Newest</option>
+          <option value="oldest">Oldest</option>
+          <option value="endingSoon">Ending soon</option>
+          <option value="endingLast">Ending last</option>
+          <option value="priceHigh">Most expensive</option>
+          <option value="priceLow">Cheapest</option>
+        </select>
+
+   
+        <label class="inline-flex items-center gap-1 text-[11px] md:text-xs text-zinc-700">
+          <input id="active-only" type="checkbox" checked
+            class="w-3 h-3 rounded border-zinc-300 text-amber-600 focus:ring-amber-500/60" />
+          Only active
+        </label>
+
+       
+        <button type="submit"
+          class="inline-flex items-center rounded-full bg-[#4A3325] px-4 py-1.5 text-[11px] md:text-xs font-semibold text-white hover:bg-[#3c281d] focus:outline-none focus:ring-2 focus:ring-[#4A3325]/50">
+          Search
+        </button>
+      </form>
+    </div>
+
+  </div>
+</section>
+
+<section id="featured" class="bg-white py-14">
+  <div class="max-w-6xl px-4 mx-auto">
+
+    <div class="flex items-center justify-between gap-4 mb-8">
+      <div>
+        <h2 class="text-3xl font-semibold tracking-tight text-zinc-900">
+          Newest Auctions
+        </h2>
+        <p class="mt-1 text-sm text-zinc-500">
+          Preview newly added items.
+        </p>
       </div>
-    </section>
 
+    <a href="#browse"
+      class="inline-flex items-center gap-2 px-5 py-2 text-sm font-medium transition-colors border rounded-full group border-zinc-300 text-zinc-700 hover:border-amber-500 hover:text-amber-700">
+      View all auctions
+      <span class="text-lg leading-none transition-transform transform group-hover:translate-x-1">→</span>
+    </a>
+    </div>
 
-    <section id="featured" class="bg-white py-14">
-      <div class="max-w-6xl px-4 mx-auto">
-        <div class="flex items-end justify-between gap-4 mb-6">
-          <div>
-            <h2 class="text-xl font-semibold text-zinc-900">Featured Lots</h2>
-            <p class="text-sm text-zinc-500">
-              Latest items from the auction house
-            </p>
-          </div>
-        </div>
+    <div id="featured-grid" class="grid gap-5 md:grid-cols-2 lg:grid-cols-4">
+      <p class="text-sm text-center col-span-full text-zinc-400">
+        Loading auctions…
+      </p>
+    </div>
 
-        <div id="featured-grid" class="grid gap-5 md:grid-cols-2 lg:grid-cols-4">
-          <p class="text-sm col-span-full text-zinc-400">Loading featured lots…</p>
-        </div>
+    <div id="featured-load-more-wrapper" class="flex items-center justify-center mt-6">
+      <button id="featured-load-more"
+        class="rounded-full border border-zinc-300 px-4 py-1.5 text-xs font-medium text-zinc-700 hover:border-amber-500 hover:text-amber-700">
+        Load more auctions
+      </button>
+    </div>
 
-        <div id="featured-load-more-wrapper" class="flex items-center justify-center mt-6">
-          <button id="featured-load-more"
-            class="rounded-full border border-zinc-300 px-4 py-1.5 text-xs font-medium text-zinc-700 hover:border-amber-500 hover:text-amber-700">
-            Load more lots
-          </button>
-        </div>
-      </div>
-    </section>
-
+  </div>
+</section>
 
     <section id="ending-soon" class="border-t bg-zinc-50 py-14 border-zinc-200">
       <div class="max-w-6xl px-4 mx-auto">
@@ -264,123 +266,271 @@
     </section>
 
 
-    <section id="about" class="text-white bg-zinc-950 py-14">
-      <div class="max-w-6xl px-4 mx-auto">
-        <div class="mb-8 text-center">
-          <p class="text-xs font-semibold uppercase tracking-[0.32em] text-amber-300">
-            Why Choose BidHouse
+  <section id="about" class="bg-[#0b1624] text-zinc-100 py-16">
+    <div class="max-w-6xl px-4 mx-auto text-center">
+  
+      <h2 class="text-3xl font-semibold tracking-tight md:text-4xl text-zinc-50">
+        Why Choose BidHouse
+      </h2>
+      <p class="mt-2 text-sm text-zinc-300">
+        Excellence in every detail
+      </p>
+  
+      <div class="grid gap-10 mt-12 sm:grid-cols-2 lg:grid-cols-4">
+  
+       
+        <div class="flex flex-col items-center text-center">
+          <div class="flex items-center justify-center w-16 h-16 rounded-full bg-[#C49A6C] bg-opacity-30">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7 text-[#C49A6C]" viewBox="0 0 24 24">
+              <path d="M12 2L3 6v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V6l-9-4z" />
+            </svg>
+          </div>
+          <h3 class="mt-4 text-lg font-medium text-zinc-100">Trusted Authentication</h3>
+          <p class="mt-2 text-sm text-zinc-400">
+            Every piece is verified by our team of expert appraisers and art historians.
           </p>
-          <h2 class="mt-2 text-xl font-semibold">A trusted partner for collectors</h2>
         </div>
-
-        <div class="grid gap-8 md:grid-cols-3">
-          <div class="space-y-2 text-sm">
-            <div
-              class="inline-flex items-center justify-center mb-2 rounded-full h-9 w-9 bg-amber-500/10 text-amber-300">
-              ★
-            </div>
-            <h3 class="text-sm font-semibold">Curated selection</h3>
-            <p class="text-xs text-zinc-300">
-              Every lot is reviewed by our specialists to ensure authenticity and quality.
-            </p>
+  
+     
+        <div class="flex flex-col items-center text-center">
+          <div class="flex items-center justify-center w-16 h-16 rounded-full bg-[#C49A6C] bg-opacity-30">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7 text-[#C49A6C]" viewBox="0 0 24 24">
+              <path d="M12 2a10 10 0 1010 10A10.011 10.011 0 0012 2zm0 18a8 8 0 118-8 8.009 8.009 0 01-8 8z" />
+            </svg>
           </div>
-
-          <div class="space-y-2 text-sm">
-            <div
-              class="inline-flex items-center justify-center mb-2 rounded-full h-9 w-9 bg-amber-500/10 text-amber-300">
-              ✓
-            </div>
-            <h3 class="text-sm font-semibold">Transparent bidding</h3>
-            <p class="text-xs text-zinc-300">
-              Clear bidding history, fees and timelines so you always know where you stand.
-            </p>
-          </div>
-
-          <div class="space-y-2 text-sm">
-            <div
-              class="inline-flex items-center justify-center mb-2 rounded-full h-9 w-9 bg-amber-500/10 text-amber-300">
-              &#x231B;
-            </div>
-            <h3 class="text-sm font-semibold">Secure payments</h3>
-            <p class="text-xs text-zinc-300">
-              Protected transactions and verified partners for worry-free collecting.
-            </p>
-          </div>
+          <h3 class="mt-4 text-lg font-medium text-zinc-100">35+ Years of Excellence</h3>
+          <p class="mt-2 text-sm text-zinc-400">
+            Established in 1988, we've built a reputation for integrity and expertise.
+          </p>
         </div>
+  
+
+        <div class="flex flex-col items-center text-center">
+          <div class="flex items-center justify-center w-16 h-16 rounded-full bg-[#C49A6C] bg-opacity-30">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7 text-[#C49A6C]" viewBox="0 0 24 24">
+              <path d="M16 11V5h-2v6h-4V5H8v6H6l6 6 6-6h-2z" />
+            </svg>
+          </div>
+          <h3 class="mt-4 text-lg font-medium text-zinc-100">Global Reach</h3>
+          <p class="mt-2 text-sm text-zinc-400">
+            Connect with collectors and institutions from over 60 countries worldwide.
+          </p>
+        </div>
+  
+       
+        <div class="flex flex-col items-center text-center">
+          <div class="flex items-center justify-center w-16 h-16 rounded-full bg-[#C49A6C] bg-opacity-30">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7 text-[#C49A6C]" viewBox="0 0 24 24">
+              <path d="M3 17v2h18v-2H3zm0-7v2h18V10H3zm0-7v2h18V3H3z" />
+            </svg>
+          </div>
+          <h3 class="mt-4 text-lg font-medium text-zinc-100">Record Results</h3>
+          <p class="mt-2 text-sm text-zinc-400">
+            Consistently achieving prices above estimate for our consignors.
+          </p>
+        </div>
+  
       </div>
-    </section>
+    </div>
+  </section>
 
 
-    <section class="bg-white py-14">
-      <div class="max-w-6xl px-4 mx-auto">
-        <div class="mb-6 text-center">
-          <h2 class="text-sm font-semibold tracking-[0.28em] uppercase text-zinc-500">
-            What Our Clients Say
-          </h2>
+
+<section id="testimonials" class="py-16 bg-white border-t border-zinc-200">
+  <div class="max-w-6xl px-4 mx-auto">
+
+    <div class="mb-10 text-center">
+      <h2 class="text-3xl font-semibold tracking-tight md:text-4xl text-zinc-900">
+        What Our Clients Say
+      </h2>
+      <p class="mt-2 text-sm text-zinc-500">
+        Trusted by collectors worldwide
+      </p>
+    </div>
+
+    <div class="grid gap-6 md:grid-cols-3">
+    
+      <article class="flex flex-col h-full px-6 py-8 border shadow-sm rounded-3xl border-zinc-200 bg-zinc-50">
+        <div class="mb-4 text-amber-700">
+          <span class="text-3xl leading-none">״</span>
         </div>
-
-        <div class="grid gap-5 md:grid-cols-3">
-          <article class="flex flex-col px-5 py-6 text-sm border shadow-sm rounded-2xl border-zinc-200 bg-zinc-50">
-            <p class="text-xs text-zinc-500">“The bidding experience feels premium yet simple. I always know
-              exactly what I'm bidding on.”</p>
-            <p class="mt-4 text-xs font-semibold text-zinc-800">Eline, Oslo</p>
-          </article>
-
-          <article class="flex flex-col px-5 py-6 text-sm border shadow-sm rounded-2xl border-zinc-200 bg-zinc-50">
-            <p class="text-xs text-zinc-500">“Great selection and smooth checkout. The countdown timers keep the
-              excitement high.”</p>
-            <p class="mt-4 text-xs font-semibold text-zinc-800">Jonas, Bergen</p>
-          </article>
-
-          <article class="flex flex-col px-5 py-6 text-sm border shadow-sm rounded-2xl border-zinc-200 bg-zinc-50">
-            <p class="text-xs text-zinc-500">“BidHouse has become my go-to place for design pieces and prints.”</p>
-            <p class="mt-4 text-xs font-semibold text-zinc-800">Kari, Stavanger</p>
-          </article>
-        </div>
-      </div>
-    </section>
-
-
-    <section class="bg-[#f7f6f3] py-14">
-      <div class="max-w-6xl px-4 mx-auto text-center">
-        <h2 class="text-sm font-semibold tracking-[0.28em] uppercase text-zinc-500">
-          Stay Informed
-        </h2>
-        <p class="mt-2 text-sm text-zinc-600">
-          Subscribe for catalog releases and auction highlights.
+        <p class="flex-1 text-sm leading-relaxed text-zinc-800">
+          BidHouse made selling my grandfather's art collection seamless. Professional, transparent, and the final
+          prices were well above our expectations.
         </p>
+        <div class="mt-6 text-sm">
+          <p class="font-semibold text-zinc-900">Sofia Andersson</p>
+          <p class="text-xs text-zinc-500">Private Collector</p>
+        </div>
+      </article>
 
-        <form class="flex flex-col max-w-md gap-3 mx-auto mt-5 sm:flex-row">
-          <input type="email" required placeholder="Your email"
-            class="flex-1 px-4 py-2 text-xs bg-white border rounded-full outline-none border-zinc-300 text-zinc-800 focus:border-amber-500">
-          <button class="px-4 py-2 text-xs font-medium text-white rounded-full bg-amber-600 hover:bg-amber-700">
-            Subscribe
-          </button>
-        </form>
-      </div>
-    </section>
+  
+      <article class="flex flex-col h-full px-6 py-8 border shadow-sm rounded-3xl border-zinc-200 bg-zinc-50">
+        <div class="mb-4 text-amber-700">
+          <span class="text-3xl leading-none">״</span>
+        </div>
+        <p class="flex-1 text-sm leading-relaxed text-zinc-800">
+          The online bidding platform is intuitive and reliable. I've successfully acquired several important pieces for
+          my collection.
+        </p>
+        <div class="mt-6 text-sm">
+          <p class="font-semibold text-zinc-900">Marcus Berg</p>
+          <p class="text-xs text-zinc-500">Art Investor</p>
+        </div>
+      </article>
+
+
+      <article class="flex flex-col h-full px-6 py-8 border shadow-sm rounded-3xl border-zinc-200 bg-zinc-50">
+        <div class="mb-4 text-amber-700">
+          <span class="text-3xl leading-none">״</span>
+        </div>
+        <p class="flex-1 text-sm leading-relaxed text-zinc-800">
+          Their expertise in Scandinavian art is unmatched. The cataloging and presentation of works feels museum
+          quality.
+        </p>
+        <div class="mt-6 text-sm">
+          <p class="font-semibold text-zinc-900">Dr. Emma Larsen</p>
+          <p class="text-xs text-zinc-500">Art Historian</p>
+        </div>
+      </article>
+    </div>
+
+  </div>
+</section>
+
+
+
+  <section id="newsletter" class="bg-[#f5f1e9] py-16 border-t border-zinc-200">
+    <div class="max-w-6xl px-4 mx-auto text-center">
+  
+      <h2 class="text-3xl font-semibold tracking-tight md:text-4xl text-zinc-900">
+        Stay tuned
+      </h2>
+  
+      <p class="max-w-md mx-auto mt-3 text-sm text-zinc-600">
+        Subscribe to receive auction previews, results, and exclusive offers.
+      </p>
+  
+      <form class="flex flex-col items-center justify-center gap-3 mt-6 sm:flex-row">
+        <input type="email" placeholder="Enter your email"
+          class="w-full px-4 py-2 text-sm bg-white border rounded-full sm:w-64 border-zinc-300 text-zinc-800 focus:outline-none focus:ring-1 focus:ring-amber-500 focus:border-amber-500"
+          required />
+  
+        <button type="submit"
+          class="rounded-full bg-[#C49A6C] px-6 py-2 text-sm font-medium text-white hover:bg-[#b28754] transition-colors">
+          Subscribe
+        </button>
+      </form>
+  
+      <p class="max-w-md mx-auto mt-4 text-xs text-zinc-500">
+        By subscribing, you agree to our Privacy Policy and consent to receive updates.
+      </p>
+  
+    </div>
+  </section>
+
 
   </main>
 
-  <footer class="mt-auto text-xs bg-white border-t border-zinc-200 text-zinc-500">
-    <div class="max-w-6xl px-4 py-6 mx-auto">
-      <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-        <p class="text-[11px]">
-          © <span id="year"></span> BidHouse. All rights reserved.
-        </p>
+<footer class="bg-[#f8f8f6] border-t border-zinc-200 py-14 text-zinc-700">
+  <div class="grid max-w-6xl gap-10 px-4 mx-auto md:grid-cols-4">
 
-        <div class="flex flex-wrap gap-4 text-[11px]">
-          <a href="#" class="hover:text-zinc-900">Terms</a>
-          <a href="#" class="hover:text-zinc-900">Privacy</a>
-          <a href="#" class="hover:text-zinc-900">Contact</a>
-        </div>
+   
+    <div class="space-y-4">
+      <div class="flex items-center gap-2">
+        <span
+          class="inline-flex items-center justify-center text-sm font-semibold text-white rounded-sm w-9 h-9 bg-zinc-900">
+          BH
+        </span>
+        <span class="text-lg font-semibold tracking-wide text-zinc-900">
+          BidHouse
+        </span>
+      </div>
+
+      <p class="text-sm leading-relaxed text-zinc-600">
+        BidHouse Europe's leading auction house for fine art and design since 1988.
+      </p>
+
+      <div class="flex items-center gap-4 pt-2">
+      
+        <a href="#" class="transition-colors text-zinc-500 hover:text-zinc-800">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+            <path
+              d="M22 12a10 10 0 1 0-11.5 9.9v-7H8v-3h2.5V9.5a3.5 3.5 0 0 1 3.8-3.9 15.4 15.4 0 0 1 2.3.2v2.5h-1.3c-1.2 0-1.6.7-1.6 1.5V12H17l-.5 3h-2.6v7A10 10 0 0 0 22 12z" />
+          </svg>
+        </a>
+
+        <a href="#" class="transition-colors text-zinc-500 hover:text-zinc-800">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+            <path
+              d="M12 2.2A9.8 9.8 0 1 0 21.8 12 9.8 9.8 0 0 0 12 2.2zm3.8 7.3l-1.9 9.3c-.1.5-.5.6-.9.4l-2.6-1.9-1.2 1.2c-.1.1-.2.2-.4.2l.1-2.6 4.8-4.4c.2-.2 0-.3-.3-.1l-5.9 3.7-2.6-.8c-.6-.2-.6-.6.1-.9l10.1-3.9c.5-.2.9.1.8.6z" />
+          </svg>
+        </a>
+
+        <a href="#" class="transition-colors text-zinc-500 hover:text-zinc-800">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+            <path
+              d="M19.6 3H4.4A1.4 1.4 0 0 0 3 4.4v15.2A1.4 1.4 0 0 0 4.4 21h15.2a1.4 1.4 0 0 0 1.4-1.4V4.4A1.4 1.4 0 0 0 19.6 3zM9.5 17.5H7v-7h2.5zm-1.2-8A1.4 1.4 0 1 1 9.7 8a1.4 1.4 0 0 1-1.4 1.5zm10.2 8h-2.5v-3.8c0-.9-.3-1.6-1.2-1.6a1.3 1.3 0 0 0-1.2.9 1.7 1.7 0 0 0-.1.6v3.9h-2.5v-7h2.4v1a2.6 2.6 0 0 1 2.3-1.2c1.7 0 2.8 1.1 2.8 3.4z" />
+          </svg>
+        </a>
+
+        <a href="#" class="transition-colors text-zinc-500 hover:text-zinc-800">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+            <path
+              d="M20 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm-1 3.2L12.5 13 5 7.2V6l7.5 5L19 6z" />
+          </svg>
+        </a>
+
       </div>
     </div>
-  </footer>
 
-  <script>
-    document.getElementById("year").textContent = new Date().getFullYear();
-  </script>
+    
+    <div class="space-y-3">
+      <h3 class="text-sm font-semibold text-zinc-900">Quick Links</h3>
+      <ul class="space-y-1 text-sm text-zinc-700">
+        <li><a href="#browse" class="hover:text-amber-700">Current Auctions</a></li>
+        <li><a href="#ending-soon" class="hover:text-amber-700">Upcoming Auctions</a></li>
+        <li><a href="#about" class="hover:text-amber-700">About Us</a></li>
+        <li><a href="" class="hover:text-amber-700">How to Bid</a></li>
+      </ul>
+    </div>
+
+   
+    <div class="space-y-3">
+      <h3 class="text-sm font-semibold text-zinc-900">Services</h3>
+      <ul class="space-y-1 text-sm text-zinc-700">
+        <li><a href="#" class="hover:text-amber-700">Sell with Us</a></li>
+        <li><a href="#" class="hover:text-amber-700">Art Valuation</a></li>
+        <li><a href="#" class="hover:text-amber-700">Private Sales</a></li>
+        <li><a href="#" class="hover:text-amber-700">Art Advisory</a></li>
+      </ul>
+    </div>
+
+    
+    <div class="space-y-3">
+      <h3 class="text-sm font-semibold text-zinc-900">Contact</h3>
+      <ul class="space-y-1 text-sm text-zinc-700">
+        <li>Storgaten 42</li>
+        <li>0182 Oslo, Norway</li>
+        <li class="pt-2">+47 22 12 34 56</li>
+        <li>info@bidhouse.no</li>
+      </ul>
+    </div>
+
+  </div>
+
+<div class="max-w-6xl px-4 mx-auto">
+  <hr class="mt-12 mb-6 border-zinc-300" />
+  <p class="text-xs text-center text-zinc-500">
+    © <span id="year">2025</span> BidHouse Auction House. All rights reserved.
+  </p>
+</div>
+</footer>
+
+<script>
+  document.getElementById("year").textContent = new Date().getFullYear();
+</script>
+
 
 <script type="module" src="src/js/index.js"></script>
 <script type="module" src="src/js/auth.js"></script>
@@ -388,3 +538,4 @@
 </body>
 
 </html>
+

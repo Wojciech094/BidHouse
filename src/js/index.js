@@ -156,114 +156,104 @@ function mapSort(value) {
 
 function createFeaturedCard(listing) {
 	const li = document.createElement('article');
-	li.className = 'relative flex flex-col overflow-hidden bg-white border shadow-sm rounded-2xl border-zinc-200';
+	li.className = 'flex flex-col overflow-hidden bg-white border shadow-sm rounded-3xl border-zinc-200';
 	li.dataset.card = 'listing';
 	li.dataset.sellerName = listing.seller?.name || '';
 
 	const imgUrl =
-		(listing.media && listing.media[0] && listing.media[0].url) || 'https://placehold.co/600x400?text=No image';
+		(listing.media && listing.media[0] && (listing.media[0].url || listing.media[0].src)) ||
+		'https://placehold.co/800x600?text=No+image';
 
 	const imgAlt = (listing.media && listing.media[0] && listing.media[0].alt) || listing.title || 'Listing image';
 
 	const linkHref = `./single.html?id=${encodeURIComponent(listing.id)}`;
+	const endsLabel = listing.endsAt ? formatEndsIn(new Date(listing.endsAt)) : 'No end date';
+	const bidsCount = Array.isArray(listing.bids) ? listing.bids.length : listing._count?.bids ?? 0;
 
 	li.innerHTML = `
-    <a href="${linkHref}" class="block relative w-full overflow-hidden">
+    <div class="flex items-center justify-between px-5 pt-4 pb-2 text-[11px]">
+      <span class="inline-flex items-center rounded-full bg-[#C49A6C]/20 px-3 py-1 font-medium text-[#4A3325]">
+        Featured
+      </span>
+      <span class="inline-flex items-center gap-1 rounded-full bg-zinc-100 px-3 py-1 text-zinc-600">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-3 h-3">
+          <path d="M12 2a10 10 0 1 0 10 10A10.011 10.011 0 0 0 12 2Zm0 18a8 8 0 1 1 8-8 8.009 8.009 0 0 1-8 8Zm.5-13h-1.5v5.25l4.5 2.67.75-1.23-3.75-2.19Z"/>
+        </svg>
+        <span>${endsLabel}</span>
+      </span>
+    </div>
+
+    <a href="${linkHref}" class="block mx-5 mt-1 mb-4 overflow-hidden rounded-2xl bg-zinc-50">
       <img
         src="${imgUrl}"
         alt="${imgAlt}"
-		loading="lazy"
-        class="object-cover w-full h-48 transition-transform duration-300 hover:scale-[1.03]"
+        loading="lazy"
+        class="object-cover w-full h-48"
       />
-      <div
-        class="absolute bottom-3 left-3 rounded-full bg-white/90 px-3 py-1 text-[11px] font-medium text-zinc-800"
-      >
-        ${listing._count?.bids ?? 0} bids
-      </div>
     </a>
 
-    <div class="flex flex-col flex-1 p-4 space-y-3">
-      <header class="flex items-start justify-between gap-3">
-        <div>
-          <h3 class="text-sm font-semibold text-zinc-900 line-clamp-2">
-            <a href="${linkHref}" class="hover:text-amber-700">
-              ${listing.title ?? 'Untitled listing'}
-            </a>
-          </h3>
-          <p class="mt-1 text-xs text-zinc-500 line-clamp-2">
-            ${listing.description || 'No description available.'}
-          </p>
-        </div>
-      </header>
+    <div class="flex flex-col flex-1 px-5 pt-3 pb-4 border-t border-zinc-100 gap-3">
+      <div class="space-y-1">
+        <p class="text-[11px] text-zinc-500">
+          ${listing.seller?.name || 'Unknown seller'}
+        </p>
+        <h3 class="text-sm font-semibold text-zinc-900 line-clamp-2">
+          <a href="${linkHref}" class="hover:text-amber-700">
+            ${listing.title ?? 'Untitled listing'}
+          </a>
+        </h3>
+      </div>
 
-      <div class="flex items-center justify-between text-xs text-zinc-600">
-        <span class="inline-flex items-center gap-1">
-          <span>Current bid:</span>
-          <span class="inline-flex items-center gap-1 font-semibold text-zinc-900">
+      <div class="flex items-end justify-between text-[11px] text-zinc-600">
+        <div>
+          <p class="text-zinc-500">Current bid</p>
+          <p class="inline-flex items-center gap-1 text-sm font-semibold text-zinc-900">
             <span>${getHighestBid(listing)}</span>
             <img
               src="/credits.svg"
               alt="credits"
               class="w-3 h-3 md:w-4 md:h-4"
             />
-          </span>
-        </span>
-
-        <span class="text-[11px] text-zinc-500">
-          ${listing.endsAt ? formatEndsIn(new Date(listing.endsAt)) : 'No end date'}
-        </span>
-      </div>
-
-      <div class="flex items-center justify-between pt-2 mt-auto border-t border-zinc-100">
-        <div class="flex items-center gap-2 text-[11px] text-zinc-500">
-          <span
-            class="inline-flex items-center justify-center w-6 h-6 text-[10px] font-semibold rounded-full bg-zinc-100 text-zinc-700"
-          >
-            ${listing.seller?.name?.slice(0, 2)?.toUpperCase() || '??'}
-          </span>
-          <span>${listing.seller?.name || 'Unknown seller'}</span>
+          </p>
         </div>
-
-        <a
-          href="${linkHref}"
-          class="inline-flex items-center rounded-full border border-zinc-300 px-4 py-1.5 text-[11px] font-medium text-zinc-800 hover:border-amber-500 hover:text-amber-700"
-        >
-          View details
-        </a>
+        <div class="text-right">
+          <p class="text-zinc-500">Bids</p>
+          <p class="text-sm font-semibold text-zinc-900">${bidsCount}</p>
+        </div>
       </div>
-    </div>
 
-    <form
-      data-bid-form
-      data-listing-id="${listing.id}"
-      class="flex items-center justify-between px-4 py-3 border-t border-zinc-100 bg-zinc-50/70"
-    >
-      <div class="flex items-center gap-2">
+      <form
+        data-bid-form
+        data-listing-id="${listing.id}"
+        class="mt-2 flex items-center gap-2"
+      >
         <input
           type="number"
           name="bid-amount"
           min="1"
           step="1"
-          class="w-24 rounded-full border border-zinc-300 px-3 py-1.5 text-[12px] text-zinc-800 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500/60"
+          class="w-24 rounded-full border border-zinc-300 px-3 py-1 text-[11px] text-zinc-800 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500/60"
           placeholder="Bid"
           required
         />
         <button
           type="submit"
-          class="rounded-full bg-amber-600 px-4 py-1.5 text-[12px] font-semibold text-white hover:bg-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-500/60"
+          class="flex-1 rounded-full bg-[#4A3325] px-4 py-1.5 text-[12px] font-semibold text-white hover:bg-[#3c281d] focus:outline-none focus:ring-2 focus:ring-[#4A3325]/50"
         >
-          Bid
+          Place a bid
         </button>
-      </div>
-      <div class="text-[11px] text-right">
+      </form>
+
+      <div class="mt-1 text-[11px] text-right">
         <p data-bid-success class="hidden text-emerald-600"></p>
         <p data-bid-error class="hidden text-red-600"></p>
       </div>
-    </form>
+    </div>
   `;
 
 	return li;
 }
+
 
 async function fetchFeaturedListings({ page, query, tag, activeOnly, sortChoice }) {
 	const params = new URLSearchParams();
