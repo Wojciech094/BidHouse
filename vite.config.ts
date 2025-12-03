@@ -18,6 +18,8 @@ export default defineConfig({
 				
 				single: './single.html',
 				wins: './my-wins.html',
+				about: './about.html',
+				contact: './contact.html',
 			},
 		},
 	},

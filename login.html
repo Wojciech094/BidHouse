@@ -8,65 +8,69 @@
     <link rel="stylesheet" href="src/style.css" />
 </head>
 
-<body class="flex items-center justify-center min-h-screen px-4 bg-zinc-100">
+<body class="flex items-center justify-center min-h-screen px-4 bg-[#0b1624] text-zinc-900">
 
     <main class="w-full max-w-md">
 
-        <button onclick="window.location.href='index.html'"
-            class="inline-flex items-center gap-1 px-3 py-1 mb-4 text-sm bg-white border rounded-full shadow-sm text-zinc-600 hover:text-amber-700 border-zinc-300 hover:border-amber-500">
-            <span class="text-lg">←</span>
-            Back
-        </button>
+        <div class="mb-6">
+            <a href="./index.html" class="inline-flex items-center gap-2 px-5 py-2 text-sm font-medium transition-colors border rounded-full group 
+                       border-zinc-400 text-zinc-100 hover:border-amber-500 hover:text-amber-300">
+                <span class="text-lg leading-none transition-transform transform group-hover:-translate-x-1">←</span>
+                Back home
+            </a>
+        </div>
 
+        
+        <section class="p-6 bg-white border shadow-sm rounded-2xl border-zinc-200">
 
-        <section class="p-6 bg-white border shadow border-zinc-200 rounded-2xl">
+     
+            <div class="flex items-center gap-2 mb-4">
+                <span
+                    class="inline-flex items-center justify-center w-8 h-8 text-xs font-semibold text-white rounded-sm bg-zinc-900">
+                    BH
+                </span>
+                <span class="text-sm font-semibold tracking-[0.25em] text-zinc-900 uppercase">
+                    BidHouse
+                </span>
+            </div>
 
-            <p class="text-[11px] font-semibold tracking-[0.25em] uppercase text-amber-700 mb-2">
-                BidHouse
+            <h1 class="text-xl font-semibold text-zinc-900">Sign in</h1>
+            <p class="mt-1 text-sm text-zinc-500">
+                Access your account to place bids and manage your listings.
             </p>
 
-            <h1 class="text-2xl font-light text-zinc-900">Welcome back</h1>
+            
+            <p id="login-message" class="mt-3 text-sm text-red-600"></p>
 
-            <p class="mb-6 text-sm text-zinc-500">
-                Log in to access your account.
-            </p>
-
-            <form id="login-form" class="space-y-4">
-
+           
+            <form id="login-form" class="mt-4 space-y-4">
                 <div>
-                    <label class="block mb-1 text-sm text-zinc-800">Email</label>
-                    <input id="login-email" type="email" required
-                        class="w-full px-3 py-2 text-sm border bg-zinc-50 border-zinc-300 rounded-xl focus:ring-2 focus:ring-amber-500"
-                        placeholder="name@stud.noroff.no" />
+                    <label for="login-email" class="block text-xs font-medium text-zinc-700">Email</label>
+                    <input id="login-email" type="email" autocomplete="email" required
+                        class="w-full px-3 py-2 mt-1 text-sm border rounded-md border-zinc-300 text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus:ring-1 focus:ring-amber-500 focus:border-amber-500" />
                 </div>
 
                 <div>
-                    <label class="block mb-1 text-sm text-zinc-800">Password</label>
-                    <input id="login-password" type="password" minlength="8" required
-                        class="w-full px-3 py-2 text-sm border bg-zinc-50 border-zinc-300 rounded-xl focus:ring-2 focus:ring-amber-500"
-                        placeholder="Your password" />
+                    <label for="login-password" class="block text-xs font-medium text-zinc-700">Password</label>
+                    <input id="login-password" type="password" autocomplete="current-password" required
+                        class="w-full px-3 py-2 mt-1 text-sm border rounded-md border-zinc-300 text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus:ring-1 focus:ring-amber-500 focus:border-amber-500" />
                 </div>
 
-                <p id="login-message" class="text-sm min-h-6"></p>
-
-                <button
-                    class="w-full bg-amber-600 text-white py-2.5 rounded-full text-sm font-semibold hover:bg-amber-500">
-                    Login
+                <button type="submit"
+                    class="inline-flex items-center justify-center w-full px-4 py-2 text-sm font-medium text-white rounded-md bg-[#4A3325] hover:bg-[#3c281d] focus:outline-none focus:ring-2 focus:ring-[#4A3325]/60 focus:ring-offset-1 focus:ring-offset-white">
+                    Sign in
                 </button>
-
             </form>
 
             <p class="mt-6 text-sm text-center text-zinc-500">
                 Don't have an account?
-                <a href="register.html" class="font-medium text-amber-700 hover:text-amber-600">Create one</a>
+                <a href="./register.html" class="font-medium text-amber-700 hover:text-amber-600">Create one</a>
             </p>
 
         </section>
-
     </main>
 
     <script type="module" src="/src/js/login-reg.js"></script>
-
 </body>
 
 </html>
