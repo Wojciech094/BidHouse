@@ -1,4 +1,4 @@
-import { AUCTION, apiRequest, getUser, ensureApiKey, showApiError  } from './auth.js';
+import { AUCTION, apiRequest, getUser, ensureApiKey, showApiError } from './auth.js';
 import { getListingIdFromUrl, toLocalInputValue, toIsoFromLocal } from './utils.js';
 
 const form = document.getElementById('edit-listing-form');
@@ -7,7 +7,13 @@ const msgEl = document.getElementById('edit-listing-message');
 const titleInput = document.getElementById('edit-title');
 const descInput = document.getElementById('edit-description');
 const mediaInput = document.getElementById('edit-media');
-const endsInput = document.getElementById('edit-endsAt');
+
+
+const endDateInput = document.getElementById('create-end-date');
+const endTimeInput = document.getElementById('create-end-time');
+
+
+const mediaPreview = document.getElementById('edit-media-preview');
 
 let currentListingId = null;
 let currentListing = null;
@@ -41,6 +47,30 @@ function setFormDisabled(disabled) {
 	});
 }
 
+
+function updateMediaPreview() {
+	if (!mediaPreview || !mediaInput) return;
+
+	const url = mediaInput.value.trim();
+
+	if (!url) {
+		
+		mediaPreview.innerHTML = 'Image preview';
+		
+		return;
+	}
+
+	mediaPreview.innerHTML = '';
+
+	const img = document.createElement('img');
+	img.src = url;
+	img.alt = 'Listing image preview';
+	img.className = 'object-cover w-full h-full';
+
+	mediaPreview.appendChild(img);
+}
+
+
 function fillForm(listing) {
 	if (titleInput) titleInput.value = listing.title || '';
 	if (descInput) descInput.value = listing.description || '';
@@ -52,10 +82,19 @@ function fillForm(listing) {
 		(firstMedia && typeof firstMedia === 'object' && firstMedia.url) ||
 		'';
 
-	if (mediaInput) mediaInput.value = url;
+	if (mediaInput) {
+		mediaInput.value = url;
+		updateMediaPreview();
+	}
 
-	if (endsInput) {
-		endsInput.value = toLocalInputValue(listing.endsAt);
+	
+	if (listing.endsAt && (endDateInput || endTimeInput)) {
+		const local = toLocalInputValue(listing.endsAt);
+		if (local) {
+			const [datePart, timePart] = local.split('T');
+			if (endDateInput) endDateInput.value = datePart || '';
+			if (endTimeInput) endTimeInput.value = timePart || '';
+		}
 	}
 }
 
@@ -125,14 +164,25 @@ async function handleSubmit(event) {
 	const title = titleInput?.value.trim() || '';
 	const description = descInput?.value.trim() || '';
 	const mediaUrl = mediaInput?.value.trim() || '';
-	const endsAtLocal = endsInput?.value || '';
+
+	
+	const datePart = endDateInput?.value || '';
+	const timePart = endTimeInput?.value || '';
 
 	if (!title) {
 		showMessage('Title is required.', 'error');
 		return;
 	}
 
-	const endsAt = toIsoFromLocal(endsAtLocal);
+	if (!datePart) {
+		showMessage('Please choose a valid end date.', 'error');
+		return;
+	}
+
+	
+	const localDateTime = `${datePart}T${timePart || '00:00'}`;
+	const endsAt = toIsoFromLocal(localDateTime);
+
 	if (!endsAt) {
 		showMessage('Please choose a valid end date.', 'error');
 		return;
@@ -146,7 +196,7 @@ async function handleSubmit(event) {
 			? [
 					{
 						url: mediaUrl,
-						alt: title,
+						alt: title || 'Listing image',
 					},
 			  ]
 			: [],
@@ -177,7 +227,12 @@ async function handleSubmit(event) {
 
 document.addEventListener('DOMContentLoaded', () => {
 	loadListing();
+
 	if (form) {
 		form.addEventListener('submit', handleSubmit);
+	}
+
+	if (mediaInput) {
+		mediaInput.addEventListener('input', updateMediaPreview);
 	}
 });

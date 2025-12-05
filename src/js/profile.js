@@ -6,130 +6,174 @@ function setText(id, value) {
 }
 
 function renderListingsList(listId, items, emptyLabel) {
-	const ul = document.getElementById(listId);
-	if (!ul) return;
+	const container = document.getElementById(listId);
+	if (!container) return;
 
-	ul.innerHTML = '';
+	container.innerHTML = '';
 
 	if (!items || items.length === 0) {
-		const li = document.createElement('li');
-		li.textContent = emptyLabel;
-		ul.appendChild(li);
+		const p = document.createElement('p');
+		p.textContent = emptyLabel;
+		p.className = 'text-xs text-zinc-400';
+		container.appendChild(p);
 		return;
 	}
 
 	for (const item of items) {
-		const li = document.createElement('li');
+		const media = Array.isArray(item.media) ? item.media : [];
+		const first = media[0];
 
-		const a = document.createElement('a');
-		a.href = `single.html?id=${encodeURIComponent(item.id)}`;
-		a.className = 'flex items-center justify-between gap-3 hover:text-amber-700';
-
-		const title = document.createElement('span');
-		title.textContent = item.title ?? 'Untitled listing';
-
-		const meta = document.createElement('span');
-		meta.className = 'text-[11px] text-zinc-400';
+		const imgUrl =
+			(typeof first === 'string' && first) ||
+			(first && typeof first === 'object' && first.url) ||
+			'https://placehold.co/600x400?text=No+image';
 
 		const dateSource = item.endsAt || item.created;
+		let dateLabel = 'No date';
 		if (dateSource) {
 			const d = new Date(dateSource);
-			meta.textContent = d.toLocaleDateString('nb-NO', {
+			dateLabel = d.toLocaleDateString('nb-NO', {
 				day: '2-digit',
 				month: '2-digit',
 				year: '2-digit',
 			});
-		} else {
-			meta.textContent = 'No date';
 		}
 
-		a.appendChild(title);
-		a.appendChild(meta);
+		
+		const card = document.createElement('a');
+		card.href = `single.html?id=${encodeURIComponent(item.id)}`;
+		card.className =
+			'flex flex-col overflow-hidden transition bg-white border shadow-sm rounded-2xl border-zinc-200 hover:border-amber-500 hover:shadow-md';
 
-		li.appendChild(a);
-		ul.appendChild(li);
+		
+		const imageWrap = document.createElement('div');
+		imageWrap.className = 'relative w-full overflow-hidden bg-zinc-100 aspect-3/4';
+
+		const img = document.createElement('img');
+		img.src = imgUrl;
+		img.alt = item.title ?? 'Listing image';
+		img.className = 'object-cover w-full h-full';
+		img.loading = 'lazy';
+
+		imageWrap.appendChild(img);
+
+	
+		const body = document.createElement('div');
+		body.className = 'flex flex-col gap-1 px-3 py-3 text-xs text-zinc-700';
+
+		const titleEl = document.createElement('p');
+		titleEl.textContent = item.title ?? 'Untitled listing';
+		titleEl.className = 'text-sm font-semibold text-zinc-900 line-clamp-2';
+
+		const metaEl = document.createElement('p');
+		metaEl.textContent = dateLabel;
+		metaEl.className = 'text-[11px] text-zinc-500';
+
+		body.appendChild(titleEl);
+		body.appendChild(metaEl);
+
+		card.appendChild(imageWrap);
+		card.appendChild(body);
+
+		container.appendChild(card);
 	}
 }
 
-
 function renderActiveBids(listId, items, emptyLabel) {
-	const ul = document.getElementById(listId);
-	if (!ul) return;
+	const container = document.getElementById(listId);
+	if (!container) return;
 
-	ul.innerHTML = '';
+	container.innerHTML = '';
 
 	if (!items || items.length === 0) {
-		const li = document.createElement('li');
-		li.textContent = emptyLabel;
-		li.className = 'text-zinc-400';
-		ul.appendChild(li);
+		const p = document.createElement('p');
+		p.textContent = emptyLabel;
+		p.className = 'text-xs text-zinc-400';
+		container.appendChild(p);
 		return;
 	}
 
 	for (const item of items) {
-		const li = document.createElement('li');
+		const media = Array.isArray(item.media) ? item.media : [];
+		const first = media[0];
 
-		const a = document.createElement('a');
-		a.href = `single.html?id=${encodeURIComponent(item.id)}`;
-		a.className =
-			'flex items-start justify-between gap-3 text-sm hover:text-amber-700';
+		const imgUrl =
+			(typeof first === 'string' && first) ||
+			(first && typeof first === 'object' && first.url) ||
+			'https://placehold.co/600x400?text=No+image';
 
-		const left = document.createElement('div');
-		left.className = 'flex flex-col gap-0.5';
-
-		const title = document.createElement('span');
-		title.className = 'font-medium';
-		title.textContent = item.title ?? 'Untitled listing';
-
-		const endsSpan = document.createElement('span');
-		endsSpan.className = 'text-[11px] text-zinc-500';
-
+		let endsLabel = 'No end date';
 		if (item.endsAt) {
 			const d = new Date(item.endsAt);
-			endsSpan.textContent =
+			endsLabel =
 				'Ends: ' +
 				d.toLocaleDateString('nb-NO', {
 					day: '2-digit',
 					month: '2-digit',
 					year: '2-digit',
 				});
-		} else {
-			endsSpan.textContent = 'No end date';
 		}
 
-		left.appendChild(title);
-		left.appendChild(endsSpan);
-
-		
-		const right = document.createElement('div');
-		right.className = 'text-right text-[12px] space-y-0.5';
-
-		const yourBidEl = document.createElement('div');
-		yourBidEl.textContent = `Your highest bid: ${item.userBid}`;
-		yourBidEl.className = 'text-zinc-600';
-
-		const statusEl = document.createElement('div');
 		const highest = typeof item.currentHighest === 'number' ? item.currentHighest : null;
 
-		if (item.isLeading && highest !== null) {
-			statusEl.textContent = 'You are currently winning';
-			statusEl.className = 'font-medium text-emerald-600';
-		} else if (!item.isLeading && highest !== null) {
-			statusEl.textContent = `Outbid — highest: ${highest}`;
-			statusEl.className = 'font-medium text-red-600';
-		} else {
-			
-			statusEl.textContent = 'Status unknown';
-			statusEl.className = 'text-zinc-400';
+		let statusText = 'Status unknown';
+		let statusClass = 'text-zinc-500';
+		if (highest !== null) {
+			if (item.isLeading) {
+				statusText = 'You are currently winning';
+				statusClass = 'text-emerald-600';
+			} else {
+				statusText = `Outbid — highest: ${highest}`;
+				statusClass = 'text-red-600';
+			}
 		}
 
-		right.appendChild(yourBidEl);
-		right.appendChild(statusEl);
+		const card = document.createElement('a');
+		card.href = `single.html?id=${encodeURIComponent(item.id)}`;
+		card.className =
+			'flex flex-col overflow-hidden transition bg-white border shadow-sm rounded-2xl border-zinc-200 hover:border-amber-500 hover:shadow-md';
 
-		a.appendChild(left);
-		a.appendChild(right);
-		li.appendChild(a);
-		ul.appendChild(li);
+		
+		const imageWrap = document.createElement('div');
+		imageWrap.className = 'relative w-full overflow-hidden bg-zinc-100 aspect-3/4';
+
+		const img = document.createElement('img');
+		img.src = imgUrl;
+		img.alt = item.title ?? 'Listing image';
+		img.className = 'object-cover w-full h-full';
+		img.loading = 'lazy';
+
+		imageWrap.appendChild(img);
+
+		
+		const body = document.createElement('div');
+		body.className = 'flex flex-col gap-1 px-3 py-3 text-xs text-zinc-700';
+
+		const titleEl = document.createElement('p');
+		titleEl.textContent = item.title ?? 'Untitled listing';
+		titleEl.className = 'text-sm font-semibold text-zinc-900 line-clamp-2';
+
+		const endsEl = document.createElement('p');
+		endsEl.textContent = endsLabel;
+		endsEl.className = 'text-[11px] text-zinc-500';
+
+		const yourBidEl = document.createElement('p');
+		yourBidEl.textContent = `Your highest bid: ${item.userBid}`;
+		yourBidEl.className = 'text-[11px] text-zinc-600';
+
+		const statusEl = document.createElement('p');
+		statusEl.textContent = statusText;
+		statusEl.className = 'text-[11px] font-semibold ' + statusClass;
+
+		body.appendChild(titleEl);
+		body.appendChild(endsEl);
+		body.appendChild(yourBidEl);
+		body.appendChild(statusEl);
+
+		card.appendChild(imageWrap);
+		card.appendChild(body);
+
+		container.appendChild(card);
 	}
 }
 
@@ -154,6 +198,7 @@ async function loadProfile() {
 			apiRequest(`${baseProfileUrl}/bids?_listings=true&sort=created&sortOrder=desc`),
 		]);
 
+		
 		setText('profile-name', profile.name || '');
 		setText('profile-email', profile.email || '');
 		setText('profile-credits', String(profile.credits ?? 0));
@@ -175,6 +220,7 @@ async function loadProfile() {
 			bannerBg.classList.add('hidden');
 		}
 
+	
 		const listings = Array.isArray(profile.listings) ? profile.listings : [];
 		setText('profile-stat-listings', String(listings.length));
 
@@ -182,6 +228,7 @@ async function loadProfile() {
 
 		renderListingsList('profile-latest-listings', latestListings, 'No listings yet.');
 
+	
 		const winsArr = Array.isArray(profile.wins) ? profile.wins : [];
 		const winsCount = typeof profile._count?.wins === 'number' ? profile._count.wins : winsArr.length;
 		setText('profile-stat-wins', String(winsCount));
@@ -196,6 +243,7 @@ async function loadProfile() {
 
 		renderListingsList('profile-latest-wins', latestWins, 'No wins yet.');
 
+		
 		const bids = Array.isArray(bidsRes?.data) ? bidsRes.data : [];
 
 		const now = new Date();
@@ -207,7 +255,6 @@ async function loadProfile() {
 
 			const endsAt = listing.endsAt ? new Date(listing.endsAt) : null;
 			const isActive = !endsAt || endsAt > now;
-
 			if (!isActive) continue;
 
 			const current = activeBidMap.get(listing.id) || {
@@ -232,7 +279,7 @@ async function loadProfile() {
 		if (activeBidItems.length > 0) {
 			const details = await Promise.all(
 				activeBidItems.map(item =>
-					apiRequest(`${AUCTION}/listings/${encodeURIComponent(item.id)}?_bids=true`).catch(() => null)
+					apiRequest(`${AUCTION}/listings/${encodeURIComponent(item.id)}?_bids=true&_media=true`).catch(() => null)
 				)
 			);
 
@@ -248,11 +295,13 @@ async function loadProfile() {
 				}
 
 				const isLeading = highest > 0 && item.userBid >= highest;
+				const media = Array.isArray(listing?.media) ? listing.media : [];
 
 				return {
 					...item,
 					currentHighest: highest,
 					isLeading,
+					media,
 				};
 			});
 		}
@@ -263,7 +312,7 @@ async function loadProfile() {
 		if (msgEl) msgEl.textContent = '';
 	} catch (error) {
 		console.error('Profile page error:', error);
-		
+
 		const main = document.querySelector('main');
 		showApiError(main, 'Could not load your profile. Please try again.');
 	}

@@ -46,8 +46,25 @@ async function apiRequest(path, options = {}) {
 	}
 
 	if (!res.ok) {
-		console.error('API error', res.status, path);
-		throw new Error('API request failed');
+		let data = null;
+
+		try {
+			data = await res.json();
+		} catch {
+			data = null;
+		}
+
+		console.error('API error', res.status, path, data);
+
+		const msgFromApi =
+			data?.errors?.[0]?.message ||
+			data?.message ||
+			(res.status === 404 ? 'Requested resource was not found.' : 'Request failed.');
+
+		const err = new Error(msgFromApi);
+		err.status = res.status;
+		err.data = data;
+		throw err;
 	}
 
 	return res.json();
@@ -156,70 +173,69 @@ function mapSort(value) {
 
 function createFeaturedCard(listing) {
 	const li = document.createElement('article');
-	li.className = 'flex flex-col overflow-hidden bg-white border shadow-sm rounded-3xl border-zinc-200';
+	li.className = 'relative flex flex-col overflow-hidden bg-white border shadow-sm rounded-3xl border-zinc-200';
 	li.dataset.card = 'listing';
 	li.dataset.sellerName = listing.seller?.name || '';
 
-	const imgUrl =
+	let rawImage =
 		(listing.media && listing.media[0] && (listing.media[0].url || listing.media[0].src)) ||
 		'https://placehold.co/800x600?text=No+image';
+
+	let imgUrl = rawImage.includes('res.cloudinary.com')
+		? rawImage.replace('/upload/', '/upload/f_auto,q_auto,w_300,h_300,c_fill/')
+		: rawImage;
 
 	const imgAlt = (listing.media && listing.media[0] && listing.media[0].alt) || listing.title || 'Listing image';
 
 	const linkHref = `./single.html?id=${encodeURIComponent(listing.id)}`;
 	const endsLabel = listing.endsAt ? formatEndsIn(new Date(listing.endsAt)) : 'No end date';
 	const bidsCount = Array.isArray(listing.bids) ? listing.bids.length : listing._count?.bids ?? 0;
+	const highest = getHighestBid(listing);
 
 	li.innerHTML = `
-    <div class="flex items-center justify-between px-5 pt-4 pb-2 text-[11px]">
-      <span class="inline-flex items-center rounded-full bg-[#C49A6C]/20 px-3 py-1 font-medium text-[#4A3325]">
-        Featured
-      </span>
-      <span class="inline-flex items-center gap-1 rounded-full bg-zinc-100 px-3 py-1 text-zinc-600">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-3 h-3">
-          <path d="M12 2a10 10 0 1 0 10 10A10.011 10.011 0 0 0 12 2Zm0 18a8 8 0 1 1 8-8 8.009 8.009 0 0 1-8 8Zm.5-13h-1.5v5.25l4.5 2.67.75-1.23-3.75-2.19Z"/>
-        </svg>
-        <span>${endsLabel}</span>
-      </span>
-    </div>
-
     <a href="${linkHref}" class="block mx-5 mt-1 mb-4 overflow-hidden rounded-2xl bg-zinc-50">
       <img
         src="${imgUrl}"
         alt="${imgAlt}"
-        loading="lazy"
         class="object-cover w-full h-48"
+        width="300"
+        height="300"
+        loading="lazy"
+        decoding="async"
       />
     </a>
 
-    <div class="flex flex-col flex-1 px-5 pt-3 pb-4 border-t border-zinc-100 gap-3">
-      <div class="space-y-1">
-        <p class="text-[11px] text-zinc-500">
-          ${listing.seller?.name || 'Unknown seller'}
-        </p>
-        <h3 class="text-sm font-semibold text-zinc-900 line-clamp-2">
-          <a href="${linkHref}" class="hover:text-amber-700">
-            ${listing.title ?? 'Untitled listing'}
-          </a>
-        </h3>
-      </div>
+    <span
+      class="absolute left-6 top-4 inline-flex items-center rounded-full bg-white/90 px-2.5 py-0.5 text-[10px] font-semibold text-amber-700 shadow-sm"
+    >
+      Featured
+    </span>
 
-      <div class="flex items-end justify-between text-[11px] text-zinc-600">
-        <div>
-          <p class="text-zinc-500">Current bid</p>
-          <p class="inline-flex items-center gap-1 text-sm font-semibold text-zinc-900">
-            <span>${getHighestBid(listing)}</span>
-            <img
-              src="/credits.svg"
-              alt="credits"
-              class="w-3 h-3 md:w-4 md:h-4"
-            />
-          </p>
-        </div>
-        <div class="text-right">
-          <p class="text-zinc-500">Bids</p>
-          <p class="text-sm font-semibold text-zinc-900">${bidsCount}</p>
-        </div>
+    <span
+      class="absolute right-6 top-4 inline-flex items-center gap-1 rounded-full bg-black/70 px-2.5 py-0.5 text-[10px] font-medium text-white"
+    >
+      <span>${endsLabel}</span>
+    </span>
+
+    <div class="flex flex-col flex-1 px-4 py-3">
+      <p class="mb-1 text-[11px] text-zinc-500">
+        ${listing.seller?.name ? listing.seller.name : 'Unknown seller'}
+      </p>
+
+      <h2 class="text-sm font-semibold text-zinc-900 line-clamp-2">
+        ${listing.title || 'Untitled listing'}
+      </h2>
+
+      <div class="mt-2 flex items-center justify-between text-[11px] text-zinc-700">
+        <span class="flex items-center gap-1">
+          <span>Current bid:</span>
+          <span class="font-semibold">${highest}</span>
+          <img src="/credits.svg" alt="Credits icon" class="w-4 h-4 opacity-80" />
+        </span>
+
+        <span class="text-[11px] text-zinc-500">
+          Bids: ${bidsCount}
+        </span>
       </div>
 
       <form
@@ -247,6 +263,16 @@ function createFeaturedCard(listing) {
       <div class="mt-1 text-[11px] text-right">
         <p data-bid-success class="hidden text-emerald-600"></p>
         <p data-bid-error class="hidden text-red-600"></p>
+      </div>
+
+      <div class="mt-3">
+        <a
+          href="${linkHref}"
+          class="inline-flex w-full items-center justify-center rounded-full border border-zinc-300 px-4 py-1.5 text-[12px] font-medium text-zinc-700 hover:border-amber-500 hover:text-amber-700"
+        >
+          View listing
+          <span class="ml-1 text-[13px] leading-none">→</span>
+        </a>
       </div>
     </div>
   `;
@@ -592,7 +618,11 @@ function initSearchAndFeatured() {
 
 document.addEventListener('DOMContentLoaded', () => {
 	initMobileNav();
+
+	
 	initSearchAndFeatured();
-	loadEndingSoon();
-	setupBidding();
+
+	
+	setTimeout(() => loadEndingSoon(), 50);
+	setTimeout(() => setupBidding(), 100);
 });

@@ -4,6 +4,21 @@ import { toIsoFromLocal } from './utils.js';
 const form = document.getElementById('create-form');
 const msgEl = document.getElementById('create-message');
 
+function updateMediaPreview() {
+	const mediaInput = document.getElementById('create-media');
+	const mediaPreview = document.getElementById('create-media-preview');
+	if (!mediaPreview) return;
+
+	const url = mediaInput?.value.trim() || '';
+
+	if (!url) {
+		mediaPreview.innerHTML = 'Image preview';
+		return;
+	}
+
+	mediaPreview.innerHTML = `<img src="${url}" alt="Listing image preview" class="object-cover w-full h-full" />`;
+}
+
 function showMessage(msg, type = 'error') {
 	if (!msgEl) return;
 	msgEl.textContent = msg || '';
@@ -70,14 +85,21 @@ async function handleSubmit(event) {
 	const titleInput = document.getElementById('create-title');
 	const descInput = document.getElementById('create-description');
 	const mediaInput = document.getElementById('create-media');
-	const endsInput = document.getElementById('create-endsAt');
+	const endDateInput = document.getElementById('create-end-date');
+	const endTimeInput = document.getElementById('create-end-time');
 	const termsInput = document.getElementById('create-terms');
 
 	const title = titleInput?.value.trim() || '';
 	const description = descInput?.value.trim() || '';
 	const mediaUrl = mediaInput?.value.trim() || '';
-	const endsAtLocal = endsInput?.value || '';
+
+	const endDate = endDateInput?.value || '';
+	const endTime = endTimeInput?.value || '';
+	
+	const endsAtLocal = endDate ? `${endDate}T${endTime || '00:00'}` : '';
+
 	const termsAccepted = termsInput?.checked || false;
+
 
 	if (!title) {
 		showMessage('Title is required.', 'error');
@@ -128,5 +150,14 @@ async function handleSubmit(event) {
 document.addEventListener('DOMContentLoaded', () => {
 	if (form) {
 		form.addEventListener('submit', handleSubmit);
+	}
+
+	const mediaInput = document.getElementById('create-media');
+	if (mediaInput) {
+		
+		updateMediaPreview();
+		
+		mediaInput.addEventListener('input', updateMediaPreview);
+		mediaInput.addEventListener('blur', updateMediaPreview);
 	}
 });
