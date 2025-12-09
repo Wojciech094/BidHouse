@@ -51,8 +51,37 @@ if (regForm) {
 				return;
 			}
 
-			showMsg(msg, 'Registered! You can now log in.', 'success');
-			regForm.reset();
+		
+			try {
+				const loginRes = await fetch(`${API}/login`, {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify({ email, password }),
+				});
+
+				const loginData = await loginRes.json();
+
+				if (!loginRes.ok) {
+					
+					showMsg(
+						msg,
+						loginData.errors?.[0]?.message || 'Registered, but automatic login failed. Please log in manually.'
+					);
+					return;
+				}
+
+				localStorage.setItem('token', loginData.data.accessToken);
+				localStorage.setItem('user', JSON.stringify(loginData.data));
+
+				showMsg(msg, 'Registration successful! Redirecting…', 'success');
+
+				setTimeout(() => {
+					window.location.href = './index.html';
+				}, 800);
+			} catch {
+			
+				showMsg(msg, 'Registered, but network error during auto login. Please log in manually.');
+			}
 		} catch {
 			showMsg(msg, 'Network error. Try again');
 		}

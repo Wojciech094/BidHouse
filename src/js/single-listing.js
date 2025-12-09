@@ -114,29 +114,39 @@ function updatePriceArea(listing) {
 function setupBidSectionState(listing) {
 	const user = getUser();
 	const bidSection = document.getElementById('bid-section');
+	const bidForm = document.getElementById('bid-form');
 	const ownListingNote = document.getElementById('single-own-listing-note');
+	const notLoggedMsg = document.getElementById('not-logged-in-message');
 
-	if (!bidSection || !ownListingNote) return;
+	if (!bidSection || !ownListingNote || !notLoggedMsg || !bidForm) return;
 
-	ownListingNote.classList.add('hidden');
+	
 	bidSection.classList.add('hidden');
+	bidForm.classList.add('hidden');
+	ownListingNote.classList.add('hidden');
+	notLoggedMsg.classList.add('hidden');
 
 	if (!user) {
-		
+		bidSection.classList.remove('hidden');   
+		notLoggedMsg.textContent = 'Please log in to place a bid.';
+		notLoggedMsg.classList.remove('hidden');
 		return;
 	}
+
 
 	if (listing.seller?.name === user.name) {
 		ownListingNote.classList.remove('hidden');
 		return;
 	}
 
-	if (!isListingActive(listing)) {
 	
+	if (!isListingActive(listing)) {
 		return;
 	}
 
+	
 	bidSection.classList.remove('hidden');
+	bidForm.classList.remove('hidden');
 }
 
 function renderListing(listing) {

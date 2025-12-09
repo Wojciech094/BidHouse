@@ -5,131 +5,133 @@
     <meta charset="UTF-8" />
     <title>BidHouse - Listing</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="description"
+    content="View full details for a single BidHouse auction listing, including images, description and bid history." />
     <link rel="stylesheet" href="src/style.css" />
 </head>
 
 <body class="flex flex-col min-h-screen bg-zinc-100 text-zinc-900">
 
-<header class="sticky top-0 z-30 border-b border-zinc-200 bg-white/95 backdrop-blur-sm">
-    <div id="toast-container" class="fixed space-y-2 top-4 right-4 z-999"></div>
+    <header class="sticky top-0 z-30 border-b border-zinc-200 bg-white/95 backdrop-blur-sm">
+        <div id="toast-container" class="fixed space-y-2 top-4 right-4 z-999"></div>
 
-    <div class="flex items-center justify-between max-w-6xl px-4 py-3 mx-auto">
-
-
-        <a href="./index.html" class="flex items-center gap-2">
-            <span
-                class="inline-flex items-center justify-center w-8 h-8 text-xs font-semibold text-white rounded-sm bg-zinc-900">
-                BH
-            </span>
-            <span class="text-sm font-semibold tracking-[0.25em] text-zinc-900 uppercase">
-                BidHouse
-            </span>
-        </a>
+        <div class="flex items-center justify-between max-w-6xl px-4 py-3 mx-auto">
 
 
-        <nav class="hidden gap-6 text-sm text-zinc-700 md:flex">
-            <a href="./index.html#featured" class="block py-1 hover:text-amber-700">Auctions</a>
-            <a href="./index.html#ending-soon" class="block py-1 hover:text-amber-700">Ending soon</a>
-            <a href="./index.html#browse" class="block py-1 hover:text-amber-700">Browse</a>
-            <a href="./about.html" class="block py-1 hover:text-amber-700">About</a>
-            <a href="./contact.html" class="block py-1 hover:text-amber-700">Contact</a>
-        </nav>
-
-
-        <div class="flex items-center gap-3 text-sm">
-
-
-            <button id="notif-btn" type="button"
-                class="relative inline-flex items-center justify-center p-2 border rounded-full border-zinc-300 text-zinc-800 hover:border-zinc-400">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-5 h-5">
-                    <path
-                        d="M12 2a6 6 0 0 0-6 6v2.586l-.707 1.707A1 1 0 0 0 6.2 14h11.6a1 1 0 0 0 .907-1.707L18 10.586V8a6 6 0 0 0-6-6zM10 18a2 2 0 1 0 4 0h-4z" />
-                </svg>
-
-                <span id="notif-badge"
-                    class="hidden absolute -top-1 -right-1 min-w-[18px] rounded-full bg-amber-600 px-1.5 text-center text-[10px] font-semibold text-white">
-                    0
+            <a href="./index.html" class="flex items-center gap-2">
+                <span
+                    class="inline-flex items-center justify-center w-8 h-8 text-xs font-semibold text-white rounded-sm bg-zinc-900">
+                    BH
                 </span>
-            </button>
+                <span class="text-sm font-semibold tracking-[0.25em] text-zinc-900 uppercase">
+                    BidHouse
+                </span>
+            </a>
 
 
-            <div id="auth-logged-out" class="flex items-center gap-3">
-                <a href="./login.html"
-                    class="inline-flex items-center justify-center rounded-md bg-[#4A3325] px-5 py-1.5 text-sm font-medium text-white hover:bg-[#3c281d]">
-                    Sign In
-                </a>
-            </div>
+            <nav class="hidden gap-6 text-sm text-zinc-700 md:flex">
+                <a href="./index.html#featured" class="block py-1 hover:text-amber-700">Auctions</a>
+                <a href="./index.html#ending-soon" class="block py-1 hover:text-amber-700">Ending soon</a>
+                <a href="./index.html#browse" class="block py-1 hover:text-amber-700">Browse</a>
+                <a href="./about.html" class="block py-1 hover:text-amber-700">About</a>
+                <a href="./contact.html" class="block py-1 hover:text-amber-700">Contact</a>
+            </nav>
 
 
-            <div id="auth-logged-in" class="relative items-center hidden gap-3">
+            <div class="flex items-center gap-3 text-sm">
 
-                <button id="user-menu-button" type="button" class="focus:outline-none">
-                    <div id="user-chip"
-                        class="inline-flex items-center gap-2 px-3 py-1 text-xs bg-white border rounded-full shadow-sm border-zinc-200 text-zinc-700">
-                        <span id="user-avatar"
-                            class="flex h-6 w-6 items-center justify-center rounded-full bg-zinc-900 text-[10px] font-semibold text-white overflow-hidden">
-                            U
-                        </span>
-                        <span id="user-name" class="text-sm font-medium"></span>
-                    </div>
+
+                <button id="notif-btn" type="button"
+                    class="relative inline-flex items-center justify-center p-2 border rounded-full border-zinc-300 text-zinc-800 hover:border-zinc-400">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-5 h-5">
+                        <path
+                            d="M12 2a6 6 0 0 0-6 6v2.586l-.707 1.707A1 1 0 0 0 6.2 14h11.6a1 1 0 0 0 .907-1.707L18 10.586V8a6 6 0 0 0-6-6zM10 18a2 2 0 1 0 4 0h-4z" />
+                    </svg>
+
+                    <span id="notif-badge"
+                        class="hidden absolute -top-1 -right-1 min-w-[18px] rounded-full bg-amber-600 px-1.5 text-center text-[10px] font-semibold text-white">
+                        0
+                    </span>
                 </button>
 
 
-                <div id="user-menu"
-                    class="absolute right-0 hidden w-56 py-2 mt-2 text-sm bg-white border shadow-lg top-full rounded-xl border-zinc-200 shadow-zinc-200/70">
+                <div id="auth-logged-out" class="flex items-center gap-3">
+                    <a href="./login.html"
+                        class="inline-flex items-center justify-center rounded-md bg-[#4A3325] px-5 py-1.5 text-sm font-medium text-white hover:bg-[#3c281d]">
+                        Sign In
+                    </a>
+                </div>
 
-                    <div class="px-4 pt-2 pb-3 border-b border-zinc-100">
-                        <p id="menu-username" class="text-sm font-semibold text-zinc-900">User</p>
-                        <p id="menu-email" class="text-xs truncate text-zinc-500">user@stud.noroff.no</p>
 
-                        <p class="flex items-center gap-1 mt-1 text-xs text-zinc-700">
-                            <span>Credits:</span>
-                            <span id="menu-credits" class="font-semibold">—</span>
-                            <img src="/credits.svg" alt="Credits icon" class="w-4 h-4" />
-                        </p>
-                    </div>
+                <div id="auth-logged-in" class="relative items-center hidden gap-3">
 
-                    <div class="py-1">
-                        <a href="./profile.html" class="block px-4 py-2 hover:bg-zinc-50">My account</a>
-                        <a href="./edit-profile.html" class="block px-4 py-2 hover:bg-zinc-50">Edit profile</a>
-                        <a href="./create.html" class="block px-4 py-2 hover:bg-zinc-50">Create listing</a>
-                        <a href="./my-listings.html" class="block px-4 py-2 hover:bg-zinc-50">My listings</a>
-                        <a href="./my-bids.html" class="block px-4 py-2 hover:bg-zinc-50">My bids</a>
-                        <a href="./my-wins.html" class="block px-4 py-2 hover:bg-zinc-50">My wins</a>
-                    </div>
+                    <button id="user-menu-button" type="button" class="focus:outline-none">
+                        <div id="user-chip"
+                            class="inline-flex items-center gap-2 px-3 py-1 text-xs bg-white border rounded-full shadow-sm border-zinc-200 text-zinc-700">
+                            <span id="user-avatar"
+                                class="flex h-6 w-6 items-center justify-center rounded-full bg-zinc-900 text-[10px] font-semibold text-white overflow-hidden">
+                                U
+                            </span>
+                            <span id="user-name" class="text-sm font-medium"></span>
+                        </div>
+                    </button>
 
-                    <div class="pt-1 mt-1 border-t border-zinc-100">
-                        <button id="dropdown-logout-btn" type="button"
-                            class="block w-full px-4 py-2 text-left text-red-600 hover:bg-red-50">
-                            Log out
-                        </button>
+
+                    <div id="user-menu"
+                        class="absolute right-0 hidden w-56 py-2 mt-2 text-sm bg-white border shadow-lg top-full rounded-xl border-zinc-200 shadow-zinc-200/70">
+
+                        <div class="px-4 pt-2 pb-3 border-b border-zinc-100">
+                            <p id="menu-username" class="text-sm font-semibold text-zinc-900">User</p>
+                            <p id="menu-email" class="text-xs truncate text-zinc-500">user@stud.noroff.no</p>
+
+                            <p class="flex items-center gap-1 mt-1 text-xs text-zinc-700">
+                                <span>Credits:</span>
+                                <span id="menu-credits" class="font-semibold">—</span>
+                                <img src="/credits.svg" alt="Credits icon" class="w-4 h-4" />
+                            </p>
+                        </div>
+
+                        <div class="py-1">
+                            <a href="./profile.html" class="block px-4 py-2 hover:bg-zinc-50">My account</a>
+                            <a href="./edit-profile.html" class="block px-4 py-2 hover:bg-zinc-50">Edit profile</a>
+                            <a href="./create.html" class="block px-4 py-2 hover:bg-zinc-50">Create listing</a>
+                            <a href="./my-listings.html" class="block px-4 py-2 hover:bg-zinc-50">My listings</a>
+                            <a href="./my-bids.html" class="block px-4 py-2 hover:bg-zinc-50">My bids</a>
+                            <a href="./my-wins.html" class="block px-4 py-2 hover:bg-zinc-50">My wins</a>
+                        </div>
+
+                        <div class="pt-1 mt-1 border-t border-zinc-100">
+                            <button id="dropdown-logout-btn" type="button"
+                                class="block w-full px-4 py-2 text-left text-red-600 hover:bg-red-50">
+                                Log out
+                            </button>
+                        </div>
                     </div>
                 </div>
+
+
+                <button id="mobile-menu-toggle" class="md:hidden text-zinc-700 hover:text-zinc-900">
+                    <span data-icon="open" class="text-2xl leading-none">☰</span>
+                    <span data-icon="close" class="hidden text-2xl leading-none">x</span>
+                </button>
             </div>
-
-
-            <button id="mobile-menu-toggle" class="md:hidden text-zinc-700 hover:text-zinc-900">
-                <span data-icon="open" class="text-2xl leading-none">☰</span>
-                <span data-icon="close" class="hidden text-2xl leading-none">x</span>
-            </button>
         </div>
-    </div>
 
 
-    <div id="mobile-menu" class="hidden bg-white border-t border-zinc-200 md:hidden">
-        <nav class="max-w-6xl px-4 pt-3 pb-4 mx-auto space-y-3 text-sm text-zinc-800">
-            <a href="./index.html#featured" class="block py-1 hover:text-amber-700">Auctions</a>
-            <a href="./index.html#ending-soon" class="block py-1 hover:text-amber-700">Ending soon</a>
-            <a href="./index.html#browse" class="block py-1 hover:text-amber-700">Browse</a>
-            <a href="./about.html" class="block py-1 hover:text-amber-700">About</a>
-            <a href="./contact.html" class="block py-1 hover:text-amber-700">Contact</a>
-        </nav>
-    </div>
-</header>
+        <div id="mobile-menu" class="hidden bg-white border-t border-zinc-200 md:hidden">
+            <nav class="max-w-6xl px-4 pt-3 pb-4 mx-auto space-y-3 text-sm text-zinc-800">
+                <a href="./index.html#featured" class="block py-1 hover:text-amber-700">Auctions</a>
+                <a href="./index.html#ending-soon" class="block py-1 hover:text-amber-700">Ending soon</a>
+                <a href="./index.html#browse" class="block py-1 hover:text-amber-700">Browse</a>
+                <a href="./about.html" class="block py-1 hover:text-amber-700">About</a>
+                <a href="./contact.html" class="block py-1 hover:text-amber-700">Contact</a>
+            </nav>
+        </div>
+    </header>
 
     <main class="flex-1">
 
-      
+
         <section class="bg-white border-b border-zinc-200">
             <div class="max-w-6xl px-4 py-8 mx-auto">
                 <p class="text-[11px] font-semibold tracking-[0.28em] uppercase text-amber-700">
@@ -142,106 +144,110 @@
             </div>
         </section>
 
-     
+
         <section class="py-10 bg-[#f5f1e9]">
             <div class="max-w-6xl px-4 mx-auto space-y-6">
 
-               
+
                 <div>
                     <a href="./index.html"
-                    class="inline-flex items-center gap-2 px-5 py-2 text-sm font-medium transition-colors border rounded-full group border-zinc-300 text-zinc-700 hover:border-amber-500 hover:text-amber-700">
-                    <span class="text-lg leading-none transition-transform transform group-hover:-translate-x-1">←</span>
-                    Back home
+                        class="inline-flex items-center gap-2 px-5 py-2 text-sm font-medium transition-colors border rounded-full group border-zinc-300 text-zinc-700 hover:border-amber-500 hover:text-amber-700">
+                        <span
+                            class="text-lg leading-none transition-transform transform group-hover:-translate-x-1">←</span>
+                        Back home
                     </a>
                 </div>
 
-                <article id="single-wrapper" class="hidden overflow-hidden bg-white border shadow-sm rounded-3xl border-zinc-200">
+                <article id="single-wrapper"
+                    class="hidden overflow-hidden bg-white border shadow-sm rounded-3xl border-zinc-200">
                     <div class="flex flex-col lg:flex-row">
-                
-                        
-                        <div class="lg:w-1/2 border-b border-zinc-200 lg:border-b-0 lg:border-r bg-[#f7f5f0]">
-                            <div class="w-full overflow-hidden aspect-4/3">
-                                <img id="single-image" src="" alt="" class="object-cover w-full h-full bg-zinc-100" />
-                            </div>
-                            
+
+
+                        <div
+                            class="lg:w-1/2 border-b border-zinc-200 lg:border-b-0 lg:border-r bg-[#f7f5f0] overflow-hidden">
+                            <img id="single-image" src="" alt="" class="object-cover w-full h-full" loading="lazy"
+                                decoding="async" />
                         </div>
-                
-                        
+
+
                         <div class="flex flex-col flex-1 p-6 text-sm text-zinc-800 md:p-8">
-                
-                           
+
+
                             <div class="flex items-start justify-between gap-4">
                                 <p id="single-badge"
                                     class="inline-flex items-center rounded-full bg-emerald-50 px-3 py-1 text-[10px] font-semibold tracking-[0.18em] uppercase text-emerald-700">
                                     LIVE AUCTION
                                 </p>
-                
+
                                 <p class="flex items-center gap-2 text-[13px] font-medium text-zinc-700">
                                     <span class="inline-block w-2 h-2 rounded-full bg-emerald-500"></span>
                                     <span id="single-ends"></span>
                                 </p>
 
                             </div>
-                
-                            
+
+
                             <div class="mt-4 space-y-2">
                                 <p class="text-[12px] text-zinc-500">
                                     Seller:
                                     <span id="single-seller" class="font-medium text-zinc-800"></span>
                                 </p>
-                
+
                                 <h2 id="single-title" class="text-2xl font-semibold text-zinc-900">
                                     Loading…
                                 </h2>
-                
+
                                 <p id="single-description" class="mt-2 text-[13px] leading-relaxed text-zinc-700"></p>
                             </div>
-                
-                          
+
+
                             <div class="mt-6">
                                 <p class="text-[12px] font-semibold text-zinc-900">
                                     Current bid
                                 </p>
-                
+
                                 <div
                                     class="inline-flex items-center justify-between gap-4 px-4 py-3 mt-2 border rounded-2xl border-zinc-200 bg-zinc-50">
                                     <p id="single-price" class="text-[15px] font-semibold text-zinc-900"></p>
-                
+
                                     <div class="flex items-center gap-1 text-[11px] text-zinc-500">
                                         <span>Credits</span>
                                         <img src="/credits.svg" alt="Credits icon" class="w-4 h-4" />
                                     </div>
                                 </div>
                             </div>
-                
-                           
+
+
                             <section class="mt-6 mb-4">
                                 <h3 class="mb-1 text-[12px] font-semibold text-zinc-900">
                                     Bid history
                                 </h3>
                                 <ul id="single-bids" class="space-y-1 text-[12px] text-zinc-700"></ul>
                             </section>
-                
-                           
+
+
                             <section id="bid-section" class="hidden pt-4 mt-4 border-t border-zinc-200">
                                 <h3 class="mb-2 text-[12px] font-semibold text-zinc-900">
                                     Place a bid
                                 </h3>
-                
-                                <form id="bid-form" class="flex flex-col items-stretch gap-3 sm:flex-row sm:items-center">
+                                <p id="not-logged-in-message" class="hidden mt-4 text-[11px] text-red-600">
+                                    Please log in to place a bid.
+                                </p>
+                                <form id="bid-form"
+                                    class="flex flex-col items-stretch gap-3 sm:flex-row sm:items-center">
                                     <div class="w-full sm:max-w-xs">
                                         <label for="bid-amount" class="sr-only">Bid amount</label>
                                         <input type="number" id="bid-amount"
                                             class="w-full rounded-full border border-zinc-300 px-3 py-1.5 text-[12px] text-zinc-800 focus:outline-none focus:border-[#4A3325] focus:ring-1 focus:ring-[#4A3325]/60"
                                             placeholder="Bid amount" />
                                     </div>
-                
+
                                     <button type="submit"
                                         class="inline-flex items-center justify-center rounded-full bg-[#4A3325] px-6 py-2 text-[12px] font-semibold text-white hover:bg-[#3c281d] focus:outline-none focus:ring-2 focus:ring-[#4A3325]/60">
                                         Place bid
                                     </button>
                                 </form>
-                
+
                                 <p id="bid-success" class="hidden mt-2 text-[11px] text-emerald-600">
                                     Bid placed successfully.
                                 </p>
@@ -249,7 +255,7 @@
                                     Could not place bid.
                                 </p>
                             </section>
-                
+
                             <p id="single-own-listing-note" class="hidden mt-4 text-[11px] text-center text-zinc-500">
                                 You are the seller of this listing. You cannot bid on your own listing.
                             </p>
@@ -264,8 +270,8 @@
 
     <footer class="bg-[#f8f8f6] border-t border-zinc-200 py-14 text-zinc-700">
         <div class="grid max-w-6xl gap-10 px-4 mx-auto md:grid-cols-4">
-    
-    
+
+
             <div class="space-y-4">
                 <div class="flex items-center gap-2">
                     <span
@@ -276,45 +282,45 @@
                         BidHouse
                     </span>
                 </div>
-    
+
                 <p class="text-sm leading-relaxed text-zinc-600">
                     BidHouse Europe's leading auction house for fine art and design since 1988.
                 </p>
-    
+
                 <div class="flex items-center gap-4 pt-2">
-    
+
                     <a href="#" class="transition-colors text-zinc-500 hover:text-zinc-800">
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                             <path
                                 d="M22 12a10 10 0 1 0-11.5 9.9v-7H8v-3h2.5V9.5a3.5 3.5 0 0 1 3.8-3.9 15.4 15.4 0 0 1 2.3.2v2.5h-1.3c-1.2 0-1.6.7-1.6 1.5V12H17l-.5 3h-2.6v7A10 10 0 0 0 22 12z" />
                         </svg>
                     </a>
-    
+
                     <a href="#" class="transition-colors text-zinc-500 hover:text-zinc-800">
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                             <path
                                 d="M12 2.2A9.8 9.8 0 1 0 21.8 12 9.8 9.8 0 0 0 12 2.2zm3.8 7.3l-1.9 9.3c-.1.5-.5.6-.9.4l-2.6-1.9-1.2 1.2c-.1.1-.2.2-.4.2l.1-2.6 4.8-4.4c.2-.2 0-.3-.3-.1l-5.9 3.7-2.6-.8c-.6-.2-.6-.6.1-.9l10.1-3.9c.5-.2.9.1.8.6z" />
                         </svg>
                     </a>
-    
+
                     <a href="#" class="transition-colors text-zinc-500 hover:text-zinc-800">
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                             <path
                                 d="M19.6 3H4.4A1.4 1.4 0 0 0 3 4.4v15.2A1.4 1.4 0 0 0 4.4 21h15.2a1.4 1.4 0 0 0 1.4-1.4V4.4A1.4 1.4 0 0 0 19.6 3zM9.5 17.5H7v-7h2.5zm-1.2-8A1.4 1.4 0 1 1 9.7 8a1.4 1.4 0 0 1-1.4 1.5zm10.2 8h-2.5v-3.8c0-.9-.3-1.6-1.2-1.6a1.3 1.3 0 0 0-1.2.9 1.7 1.7 0 0 0-.1.6v3.9h-2.5v-7h2.4v1a2.6 2.6 0 0 1 2.3-1.2c1.7 0 2.8 1.1 2.8 3.4z" />
                         </svg>
                     </a>
-    
+
                     <a href="#" class="transition-colors text-zinc-500 hover:text-zinc-800">
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                             <path
                                 d="M20 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm-1 3.2L12.5 13 5 7.2V6l7.5 5L19 6z" />
                         </svg>
                     </a>
-    
+
                 </div>
             </div>
-    
-    
+
+
             <div class="space-y-3">
                 <h3 class="text-sm font-semibold text-zinc-900">Quick Links</h3>
                 <ul class="space-y-1 text-sm text-zinc-700">
@@ -324,8 +330,8 @@
                     <li><a href="#" class="hover:text-amber-700">How to Bid</a></li>
                 </ul>
             </div>
-    
-    
+
+
             <div class="space-y-3">
                 <h3 class="text-sm font-semibold text-zinc-900">Services</h3>
                 <ul class="space-y-1 text-sm text-zinc-700">
@@ -335,8 +341,8 @@
                     <li><a href="#" class="hover:text-amber-700">Art Advisory</a></li>
                 </ul>
             </div>
-    
-    
+
+
             <div class="space-y-3">
                 <h3 class="text-sm font-semibold text-zinc-900">Contact</h3>
                 <ul class="space-y-1 text-sm text-zinc-700">
@@ -346,9 +352,9 @@
                     <li>info@bidhouse.no</li>
                 </ul>
             </div>
-    
+
         </div>
-    
+
         <div class="max-w-6xl px-4 mx-auto">
             <hr class="mt-12 mb-6 border-zinc-300" />
             <p class="text-xs text-center text-zinc-500">
@@ -356,7 +362,7 @@
             </p>
         </div>
     </footer>
-    
+
     <script>
         document.getElementById("year").textContent = new Date().getFullYear();
     </script>

@@ -5,6 +5,8 @@
     <meta charset="UTF-8" />
     <title>My listings | BidHouse</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description"
+        content="See and manage all the auction listings you have created on BidHouse, both active and closed." />
     <link rel="stylesheet" href="src/style.css" />
 </head>
 
@@ -257,12 +259,13 @@
             © <span id="year">2025</span> BidHouse Auction House. All rights reserved.
         </p>
     </div>
-</foote>
+</footer>
 
 <script>
     document.getElementById("year").textContent = new Date().getFullYear();
 </script>
 
+    <script type="module" src="/src/js/index.js"></script>
     <script type="module" src="/src/js/auth.js"></script>
     <script type="module" src="/src/js/my-listings.js"></script>
 </body>

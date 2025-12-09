@@ -193,17 +193,16 @@ function createFeaturedCard(listing) {
 	const highest = getHighestBid(listing);
 
 	li.innerHTML = `
-    <a href="${linkHref}" class="block mx-5 mt-1 mb-4 overflow-hidden rounded-2xl bg-zinc-50">
-      <img
-        src="${imgUrl}"
-        alt="${imgAlt}"
-        class="object-cover w-full h-48"
-        width="300"
-        height="300"
-        loading="lazy"
-        decoding="async"
-      />
-    </a>
+   <a href="${linkHref}" class="block overflow-hidden rounded-t-3xl bg-zinc-50 aspect-4/3">
+    <img
+      src="${imgUrl}"
+      alt="${imgAlt}"
+      class="w-full h-full object-cover"
+      loading="lazy"
+      decoding="async"
+    />
+  </a>
+
 
     <span
       class="absolute left-6 top-4 inline-flex items-center rounded-full bg-white/90 px-2.5 py-0.5 text-[10px] font-semibold text-amber-700 shadow-sm"
@@ -279,7 +278,6 @@ function createFeaturedCard(listing) {
 
 	return li;
 }
-
 
 async function fetchFeaturedListings({ page, query, tag, activeOnly, sortChoice }) {
 	const params = new URLSearchParams();
@@ -383,7 +381,6 @@ async function loadFeaturedFirstPage() {
 			showApiError(featuredGrid, 'Could not load listings. Please try again.');
 		}
 	}
-
 }
 
 async function loadFeaturedNextPage() {
@@ -434,6 +431,15 @@ async function loadEndingSoon() {
 		const fragment = document.createDocumentFragment();
 		data.forEach(listing => {
 			const card = createFeaturedCard(listing);
+
+			
+			const badgeEl = card.querySelector('span.absolute.left-6.top-4');
+			if (badgeEl) {
+				badgeEl.textContent = 'Soon to end';
+				badgeEl.className =
+					'absolute left-6 top-4 inline-flex items-center rounded-full bg-blue-100 text-blue-700 px-2.5 py-0.5 text-[10px] font-semibold shadow-sm';
+			}
+
 			fragment.appendChild(card);
 		});
 
@@ -619,10 +625,8 @@ function initSearchAndFeatured() {
 document.addEventListener('DOMContentLoaded', () => {
 	initMobileNav();
 
-	
 	initSearchAndFeatured();
 
-	
 	setTimeout(() => loadEndingSoon(), 50);
 	setTimeout(() => setupBidding(), 100);
 });
