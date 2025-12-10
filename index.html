@@ -67,7 +67,8 @@
 
       <div id="auth-logged-in" class="relative items-center hidden gap-3">
 
-        <button id="user-menu-button" type="button" class="focus:outline-none">
+        <button id="user-menu-button" type="button" aria-label="Open user menu"
+          class="focus:outline-none focus:ring-2 focus:ring-amber-500">
           <div id="user-chip"
             class="inline-flex items-center gap-2 px-3 py-1 text-xs bg-white border rounded-full shadow-sm border-zinc-200 text-zinc-700">
             <span id="user-avatar"
@@ -112,7 +113,8 @@
       </div>
 
 
-      <button id="mobile-menu-toggle" class="md:hidden text-zinc-700 hover:text-zinc-900">
+      <button id="mobile-menu-toggle" type="button" aria-label="Toggle navigation menu" aria-expanded="false"
+        class="md:hidden text-zinc-700 hover:text-zinc-900 focus:outline-none focus:ring-2 focus:ring-amber-500">
         <span data-icon="open" class="text-2xl leading-none">☰</span>
         <span data-icon="close" class="hidden text-2xl leading-none">x</span>
       </button>
