@@ -1,6 +1,8 @@
 import { AUCTION, apiRequest, getUser, ensureApiKey, formatEndsIn, showToast, showApiError } from './auth.js';
 import { getListingIdFromUrl, getHighestBid } from './utils.js';
 
+const FALLBACK_IMAGE = '/listing-placeholder.svg';
+
 let currentListing = null;
 let currentListingId = null;
 
@@ -162,15 +164,22 @@ function renderListing(listing) {
 
 	const media = Array.isArray(listing.media) ? listing.media : [];
 	const firstMedia = media[0];
-	const imgUrl =
-		(typeof firstMedia === 'string' && firstMedia) ||
-		(firstMedia && typeof firstMedia === 'object' && firstMedia.url) ||
-		'https://placehold.co/800x600?text=No+image';
+	
+		const imgUrl =
+			(typeof firstMedia === 'string' && firstMedia) ||
+			(firstMedia && typeof firstMedia === 'object' && firstMedia.url) ||
+			FALLBACK_IMAGE;
 
-	if (imgEl) {
-		imgEl.src = imgUrl;
-		imgEl.alt = listing.title || 'Listing image';
-	}
+		if (imgEl) {
+			imgEl.onerror = () => {
+				imgEl.onerror = null;
+				imgEl.src = FALLBACK_IMAGE;
+				imgEl.alt = 'Image unavailable';
+			};
+
+			imgEl.src = imgUrl;
+			imgEl.alt = listing.title || 'Listing image';
+		}
 
 	if (titleEl) {
 		titleEl.textContent = listing.title || 'Untitled listing';

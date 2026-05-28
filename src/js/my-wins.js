@@ -1,6 +1,8 @@
 import { AUCTION, apiRequest, getUser, ensureApiKey, showApiError } from './auth.js';
 import { getHighestBid } from './utils.js';
 
+const FALLBACK_IMAGE = '/listing-placeholder.svg';
+
 const grid = document.getElementById('wins-grid');
 const msgEl = document.getElementById('wins-message');
 const LAST_SEEN_WINS_KEY = 'lastSeenWinsCount';
@@ -43,15 +45,18 @@ function createWinCard(listing) {
 				day: '2-digit',
 				hour: '2-digit',
 				minute: '2-digit',
-		  })
+			})
 		: 'Unknown';
 
 	const media = Array.isArray(listing.media) ? listing.media : [];
 	const firstMedia = media[0];
+
 	const imgUrl =
 		(typeof firstMedia === 'string' && firstMedia) ||
 		(firstMedia && typeof firstMedia === 'object' && firstMedia.url) ||
-		'https://placehold.co/600x400?text=No+image';
+		FALLBACK_IMAGE;
+
+	const imgAlt = (firstMedia && typeof firstMedia === 'object' && firstMedia.alt) || listing.title || 'Listing image';
 
 	const card = document.createElement('article');
 	card.className =
@@ -59,12 +64,19 @@ function createWinCard(listing) {
 
 	card.innerHTML = `
 		<a href="./single.html?id=${encodeURIComponent(listing.id)}" class="block aspect-4/3 bg-zinc-100 overflow-hidden">
-			<img src="${imgUrl}" alt="${escapeHtml(listing.title)}" loading="lazy" class="object-cover w-full h-full" />
+			<img
+				src="${imgUrl}"
+				alt="${escapeHtml(imgAlt)}"
+				loading="lazy"
+				decoding="async"
+				class="object-cover w-full h-full"
+				data-listing-image
+			/>
 		</a>
 
 		<div class="flex flex-col flex-1 px-4 py-3">
 			<h2 class="mb-1 text-sm font-semibold text-zinc-900 line-clamp-2">
-				${escapeHtml(listing.title)}
+				${escapeHtml(listing.title || 'Untitled listing')}
 			</h2>
 
 			<p class="mb-2 text-[11px] text-zinc-500">
@@ -86,6 +98,19 @@ function createWinCard(listing) {
 			</div>
 		</div>
 	`;
+
+	const imageEl = card.querySelector('[data-listing-image]');
+
+	if (imageEl instanceof HTMLImageElement) {
+		imageEl.addEventListener(
+			'error',
+			() => {
+				imageEl.src = FALLBACK_IMAGE;
+				imageEl.alt = 'Image unavailable';
+			},
+			{ once: true },
+		);
+	}
 
 	return card;
 }
@@ -139,7 +164,7 @@ async function loadWins() {
 			.map(item => (item && item.listing ? item.listing : item))
 			.filter(listing => listing && listing.id);
 
-		const fullListings = await Promise.all(baseListings.map(l => fetchListingWithBids(l.id)));
+		const fullListings = await Promise.all(baseListings.map(listing => fetchListingWithBids(listing.id)));
 
 		const listings = fullListings.filter(Boolean);
 
@@ -152,7 +177,7 @@ async function loadWins() {
 			'baseListings:',
 			baseListings.length,
 			'fullListings:',
-			listings.length
+			listings.length,
 		);
 	} catch (error) {
 		console.error('My wins error:', error);

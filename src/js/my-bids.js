@@ -1,13 +1,15 @@
-import { AUCTION, apiRequest, getUser, ensureApiKey, formatEndsIn ,showApiError } from './auth.js';
+import { AUCTION, apiRequest, getUser, ensureApiKey, formatEndsIn, showApiError } from './auth.js';
 import { getHighestBid } from './utils.js';
+
+const FALLBACK_IMAGE = '/listing-placeholder.svg';
 
 const grid = document.getElementById('my-bids-grid');
 const msgEl = document.getElementById('my-bids-message');
 
 function showMessage(text, type = 'info') {
 	if (!msgEl) return;
-	msgEl.textContent = text || '';
 
+	msgEl.textContent = text || '';
 	msgEl.classList.remove('text-red-600', 'text-zinc-500', 'text-emerald-600');
 
 	if (type === 'error') {
@@ -30,6 +32,7 @@ function escapeHtml(str = '') {
 
 function hasEnded(endsAt) {
 	if (!endsAt) return false;
+
 	return new Date(endsAt).getTime() <= Date.now();
 }
 
@@ -48,33 +51,43 @@ function createBidCard({ listing, myBid, isWin, ended }) {
 			status = 'Lost';
 			statusClass = 'bg-zinc-50 text-zinc-700 border-zinc-200';
 		}
-	} else {
-		if (myBid >= highest && highest > 0) {
-			status = 'Leading';
-			statusClass = 'bg-emerald-50 text-emerald-700 border-emerald-200';
-		}
+	} else if (myBid >= highest && highest > 0) {
+		status = 'Leading';
+		statusClass = 'bg-emerald-50 text-emerald-700 border-emerald-200';
 	}
 
 	const media = Array.isArray(listing.media) ? listing.media : [];
 	const firstMedia = media[0];
+
 	const imgUrl =
 		(typeof firstMedia === 'string' && firstMedia) ||
 		(firstMedia && typeof firstMedia === 'object' && firstMedia.url) ||
-		'https://placehold.co/600x400?text=No+image';
+		FALLBACK_IMAGE;
+
+	const imgAlt = (firstMedia && typeof firstMedia === 'object' && firstMedia.alt) || listing.title || 'Listing image';
 
 	const card = document.createElement('article');
+
 	card.className =
 		'flex flex-col overflow-hidden text-xs bg-white border shadow-sm rounded-2xl border-zinc-200 text-zinc-700';
 
 	card.innerHTML = `
 		<a href="./single.html?id=${encodeURIComponent(listing.id)}" class="block aspect-4/3 bg-zinc-100 overflow-hidden">
-			<img src="${imgUrl}" alt="${escapeHtml(listing.title)}" class="object-cover w-full h-full" loading="lazy" />
+			<img
+				src="${imgUrl}"
+				alt="${escapeHtml(imgAlt)}"
+				class="object-cover w-full h-full"
+				loading="lazy"
+				decoding="async"
+				data-listing-image
+			/>
 		</a>
 
 		<div class="flex flex-col flex-1 px-4 py-3">
 			<h2 class="mb-1 text-sm font-semibold text-zinc-900 line-clamp-2">
-				${escapeHtml(listing.title)}
+				${escapeHtml(listing.title || 'Untitled listing')}
 			</h2>
+
 			<p class="mb-1 text-[11px] text-zinc-500">
 				${listing.endsAt ? endsLabel : 'No end date'}
 			</p>
@@ -92,20 +105,36 @@ function createBidCard({ listing, myBid, isWin, ended }) {
 		</div>
 	`;
 
+	const imageEl = card.querySelector('[data-listing-image]');
+
+	if (imageEl instanceof HTMLImageElement) {
+		imageEl.addEventListener(
+			'error',
+			() => {
+				imageEl.src = FALLBACK_IMAGE;
+				imageEl.alt = 'Image unavailable';
+			},
+			{ once: true },
+		);
+	}
+
 	return card;
 }
 
 function renderBids(summaryList) {
 	if (!grid) return;
+
 	grid.innerHTML = '';
 
 	if (!Array.isArray(summaryList) || summaryList.length === 0) {
 		showMessage('You have not placed any bids yet.', 'info');
+
 		grid.innerHTML = `
 			<p class="col-span-full mt-4 text-sm text-center text-zinc-500">
 				You haven't bid on any listings yet.
 			</p>
 		`;
+
 		return;
 	}
 
@@ -130,7 +159,7 @@ async function loadMyBids() {
 		await ensureApiKey();
 
 		const bidsUrl = `${AUCTION}/profiles/${encodeURIComponent(
-			user.name
+			user.name,
 		)}/bids?_listings=true&sort=created&sortOrder=desc`;
 
 		const winsUrl = `${AUCTION}/profiles/${encodeURIComponent(user.name)}/wins`;
@@ -144,15 +173,20 @@ async function loadMyBids() {
 		const winsRaw = Array.isArray(winsRes.data) ? winsRes.data : [];
 
 		const winIds = new Set();
-		for (const w of winsRaw) {
-			const id = (w && w.listing && w.listing.id) || (w && w.id) || null;
-			if (id) winIds.add(id);
+
+		for (const win of winsRaw) {
+			const id = (win && win.listing && win.listing.id) || (win && win.id) || null;
+
+			if (id) {
+				winIds.add(id);
+			}
 		}
 
 		const byListing = new Map();
 
 		for (const bid of bids) {
 			const listing = bid.listing;
+
 			if (!listing || !listing.id) continue;
 
 			const amount = typeof bid.amount === 'number' ? bid.amount : 0;
@@ -176,14 +210,14 @@ async function loadMyBids() {
 		const detailedResults = await Promise.all(
 			baseList.map(item =>
 				apiRequest(`${AUCTION}/listings/${encodeURIComponent(item.listing.id)}?_bids=true&_seller=true`).catch(
-					() => null
-				)
-			)
+					() => null,
+				),
+			),
 		);
 
-		const summaryList = baseList.map((item, idx) => {
-			const res = detailedResults[idx];
-			const fullListing = res?.data || item.listing;
+		const summaryList = baseList.map((item, index) => {
+			const response = detailedResults[index];
+			const fullListing = response?.data || item.listing;
 			const ended = hasEnded(fullListing.endsAt);
 			const isWin = ended && winIds.has(fullListing.id);
 
@@ -200,7 +234,6 @@ async function loadMyBids() {
 		console.error('My bids error:', error);
 		showApiError(document.getElementById('my-bids-grid'));
 	}
-
 }
 
 document.addEventListener('DOMContentLoaded', () => {

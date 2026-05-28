@@ -1,12 +1,29 @@
 import { AUCTION, apiRequest, getUser, ensureApiKey, showApiError } from './auth.js';
 
+const FALLBACK_IMAGE = '/listing-placeholder.svg';
+
 function setText(id, value) {
 	const el = document.getElementById(id);
-	if (el) el.textContent = value;
+
+	if (el) {
+		el.textContent = value;
+	}
+}
+
+function addListingImageFallback(imageElement) {
+	imageElement.addEventListener(
+		'error',
+		() => {
+			imageElement.src = FALLBACK_IMAGE;
+			imageElement.alt = 'Image unavailable';
+		},
+		{ once: true },
+	);
 }
 
 function renderListingsList(listId, items, emptyLabel) {
 	const container = document.getElementById(listId);
+
 	if (!container) return;
 
 	container.innerHTML = '';
@@ -24,40 +41,42 @@ function renderListingsList(listId, items, emptyLabel) {
 		const first = media[0];
 
 		const imgUrl =
-			(typeof first === 'string' && first) ||
-			(first && typeof first === 'object' && first.url) ||
-			'https://placehold.co/600x400?text=No+image';
+			(typeof first === 'string' && first) || (first && typeof first === 'object' && first.url) || FALLBACK_IMAGE;
+
+		const imgAlt = (first && typeof first === 'object' && first.alt) || item.title || 'Listing image';
 
 		const dateSource = item.endsAt || item.created;
 		let dateLabel = 'No date';
+
 		if (dateSource) {
-			const d = new Date(dateSource);
-			dateLabel = d.toLocaleDateString('nb-NO', {
+			const date = new Date(dateSource);
+
+			dateLabel = date.toLocaleDateString('nb-NO', {
 				day: '2-digit',
 				month: '2-digit',
 				year: '2-digit',
 			});
 		}
 
-		
 		const card = document.createElement('a');
 		card.href = `single.html?id=${encodeURIComponent(item.id)}`;
 		card.className =
 			'flex flex-col overflow-hidden transition bg-white border shadow-sm rounded-2xl border-zinc-200 hover:border-amber-500 hover:shadow-md';
 
-		
 		const imageWrap = document.createElement('div');
 		imageWrap.className = 'relative w-full overflow-hidden bg-zinc-100 aspect-3/4';
 
 		const img = document.createElement('img');
-		img.src = imgUrl;
-		img.alt = item.title ?? 'Listing image';
+		img.alt = imgAlt;
 		img.className = 'object-cover w-full h-full';
 		img.loading = 'lazy';
+		img.decoding = 'async';
+
+		addListingImageFallback(img);
+		img.src = imgUrl;
 
 		imageWrap.appendChild(img);
 
-	
 		const body = document.createElement('div');
 		body.className = 'flex flex-col gap-1 px-3 py-3 text-xs text-zinc-700';
 
@@ -81,6 +100,7 @@ function renderListingsList(listId, items, emptyLabel) {
 
 function renderActiveBids(listId, items, emptyLabel) {
 	const container = document.getElementById(listId);
+
 	if (!container) return;
 
 	container.innerHTML = '';
@@ -98,16 +118,18 @@ function renderActiveBids(listId, items, emptyLabel) {
 		const first = media[0];
 
 		const imgUrl =
-			(typeof first === 'string' && first) ||
-			(first && typeof first === 'object' && first.url) ||
-			'https://placehold.co/600x400?text=No+image';
+			(typeof first === 'string' && first) || (first && typeof first === 'object' && first.url) || FALLBACK_IMAGE;
+
+		const imgAlt = (first && typeof first === 'object' && first.alt) || item.title || 'Listing image';
 
 		let endsLabel = 'No end date';
+
 		if (item.endsAt) {
-			const d = new Date(item.endsAt);
+			const date = new Date(item.endsAt);
+
 			endsLabel =
 				'Ends: ' +
-				d.toLocaleDateString('nb-NO', {
+				date.toLocaleDateString('nb-NO', {
 					day: '2-digit',
 					month: '2-digit',
 					year: '2-digit',
@@ -118,6 +140,7 @@ function renderActiveBids(listId, items, emptyLabel) {
 
 		let statusText = 'Status unknown';
 		let statusClass = 'text-zinc-500';
+
 		if (highest !== null) {
 			if (item.isLeading) {
 				statusText = 'You are currently winning';
@@ -133,19 +156,20 @@ function renderActiveBids(listId, items, emptyLabel) {
 		card.className =
 			'flex flex-col overflow-hidden transition bg-white border shadow-sm rounded-2xl border-zinc-200 hover:border-amber-500 hover:shadow-md';
 
-		
 		const imageWrap = document.createElement('div');
 		imageWrap.className = 'relative w-full overflow-hidden bg-zinc-100 aspect-3/4';
 
 		const img = document.createElement('img');
-		img.src = imgUrl;
-		img.alt = item.title ?? 'Listing image';
+		img.alt = imgAlt;
 		img.className = 'object-cover w-full h-full';
 		img.loading = 'lazy';
+		img.decoding = 'async';
+
+		addListingImageFallback(img);
+		img.src = imgUrl;
 
 		imageWrap.appendChild(img);
 
-		
 		const body = document.createElement('div');
 		body.className = 'flex flex-col gap-1 px-3 py-3 text-xs text-zinc-700';
 
@@ -163,7 +187,7 @@ function renderActiveBids(listId, items, emptyLabel) {
 
 		const statusEl = document.createElement('p');
 		statusEl.textContent = statusText;
-		statusEl.className = 'text-[11px] font-semibold ' + statusClass;
+		statusEl.className = `text-[11px] font-semibold ${statusClass}`;
 
 		body.appendChild(titleEl);
 		body.appendChild(endsEl);
@@ -182,7 +206,10 @@ async function loadProfile() {
 	const msgEl = document.getElementById('profile-message');
 
 	if (!user) {
-		if (msgEl) msgEl.textContent = 'You must be logged in to view this page.';
+		if (msgEl) {
+			msgEl.textContent = 'You must be logged in to view this page.';
+		}
+
 		window.location.href = './login.html';
 		return;
 	}
@@ -198,20 +225,22 @@ async function loadProfile() {
 			apiRequest(`${baseProfileUrl}/bids?_listings=true&sort=created&sortOrder=desc`),
 		]);
 
-		
 		setText('profile-name', profile.name || '');
 		setText('profile-email', profile.email || '');
 		setText('profile-credits', String(profile.credits ?? 0));
 		setText('profile-bio', profile.bio || 'No bio added yet.');
 
 		const avatarEl = document.getElementById('profile-avatar');
+
 		if (avatarEl) {
 			const avatarUrl = profile.avatar?.url || 'https://placehold.co/200x200?text=No+Avatar';
+
 			avatarEl.src = avatarUrl;
 			avatarEl.alt = `${profile.name} avatar`;
 		}
 
 		const bannerBg = document.getElementById('profile-banner-bg');
+
 		if (bannerBg && profile.banner?.url) {
 			bannerBg.style.backgroundImage = `url("${profile.banner.url}")`;
 			bannerBg.classList.remove('hidden');
@@ -220,30 +249,32 @@ async function loadProfile() {
 			bannerBg.classList.add('hidden');
 		}
 
-	
 		const listings = Array.isArray(profile.listings) ? profile.listings : [];
+
 		setText('profile-stat-listings', String(listings.length));
 
 		const latestListings = [...listings].sort((a, b) => new Date(b.created) - new Date(a.created)).slice(0, 3);
 
 		renderListingsList('profile-latest-listings', latestListings, 'No listings yet.');
 
-	
 		const winsArr = Array.isArray(profile.wins) ? profile.wins : [];
+
 		const winsCount = typeof profile._count?.wins === 'number' ? profile._count.wins : winsArr.length;
+
 		setText('profile-stat-wins', String(winsCount));
 
 		const latestWins = [...winsArr]
 			.sort((a, b) => {
-				const da = a.endsAt ? new Date(a.endsAt) : a.created ? new Date(a.created) : new Date(0);
-				const db = b.endsAt ? new Date(b.endsAt) : b.created ? new Date(b.created) : new Date(0);
-				return db - da;
+				const dateA = a.endsAt ? new Date(a.endsAt) : a.created ? new Date(a.created) : new Date(0);
+
+				const dateB = b.endsAt ? new Date(b.endsAt) : b.created ? new Date(b.created) : new Date(0);
+
+				return dateB - dateA;
 			})
 			.slice(0, 3);
 
 		renderListingsList('profile-latest-wins', latestWins, 'No wins yet.');
 
-		
 		const bids = Array.isArray(bidsRes?.data) ? bidsRes.data : [];
 
 		const now = new Date();
@@ -251,10 +282,12 @@ async function loadProfile() {
 
 		for (const bid of bids) {
 			const listing = bid.listing;
+
 			if (!listing || !listing.id) continue;
 
 			const endsAt = listing.endsAt ? new Date(listing.endsAt) : null;
 			const isActive = !endsAt || endsAt > now;
+
 			if (!isActive) continue;
 
 			const current = activeBidMap.get(listing.id) || {
@@ -265,33 +298,42 @@ async function loadProfile() {
 			};
 
 			const userAmount = typeof bid.amount === 'number' ? bid.amount : 0;
-			if (userAmount > current.userBid) current.userBid = userAmount;
+
+			if (userAmount > current.userBid) {
+				current.userBid = userAmount;
+			}
 
 			activeBidMap.set(listing.id, current);
 		}
 
 		let activeBidItems = Array.from(activeBidMap.values()).sort((a, b) => {
-			const da = a.endsAt ? new Date(a.endsAt) : new Date(8640000000000000);
-			const db = b.endsAt ? new Date(b.endsAt) : new Date(8640000000000000);
-			return da - db;
+			const dateA = a.endsAt ? new Date(a.endsAt) : new Date(8640000000000000);
+
+			const dateB = b.endsAt ? new Date(b.endsAt) : new Date(8640000000000000);
+
+			return dateA - dateB;
 		});
 
 		if (activeBidItems.length > 0) {
 			const details = await Promise.all(
 				activeBidItems.map(item =>
-					apiRequest(`${AUCTION}/listings/${encodeURIComponent(item.id)}?_bids=true&_media=true`).catch(() => null)
-				)
+					apiRequest(`${AUCTION}/listings/${encodeURIComponent(item.id)}?_bids=true&_media=true`).catch(() => null),
+				),
 			);
 
-			activeBidItems = activeBidItems.map((item, idx) => {
-				const res = details[idx];
-				const listing = res?.data;
+			activeBidItems = activeBidItems.map((item, index) => {
+				const response = details[index];
+				const listing = response?.data;
 				const bidsArr = Array.isArray(listing?.bids) ? listing.bids : [];
 
 				let highest = 0;
-				for (const b of bidsArr) {
-					const amt = typeof b.amount === 'number' && !Number.isNaN(b.amount) ? b.amount : 0;
-					if (amt > highest) highest = amt;
+
+				for (const bid of bidsArr) {
+					const amount = typeof bid.amount === 'number' && !Number.isNaN(bid.amount) ? bid.amount : 0;
+
+					if (amount > highest) {
+						highest = amount;
+					}
 				}
 
 				const isLeading = highest > 0 && item.userBid >= highest;
@@ -309,7 +351,9 @@ async function loadProfile() {
 		setText('profile-stat-active', String(activeBidItems.length));
 		renderActiveBids('profile-active-bids', activeBidItems, 'No active bids.');
 
-		if (msgEl) msgEl.textContent = '';
+		if (msgEl) {
+			msgEl.textContent = '';
+		}
 	} catch (error) {
 		console.error('Profile page error:', error);
 

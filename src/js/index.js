@@ -2,6 +2,7 @@ import { showApiError } from './auth.js';
 
 const API_BASE = 'https://v2.api.noroff.dev';
 const AUCTION = `${API_BASE}/auction`;
+const FALLBACK_IMAGE = '/listing-placeholder.svg';
 
 function getUser() {
 	try {
@@ -177,9 +178,8 @@ function createFeaturedCard(listing) {
 	li.dataset.card = 'listing';
 	li.dataset.sellerName = listing.seller?.name || '';
 
-	let rawImage =
-		(listing.media && listing.media[0] && (listing.media[0].url || listing.media[0].src)) ||
-		'https://placehold.co/800x600?text=No+image';
+	const rawImage =
+		(listing.media && listing.media[0] && (listing.media[0].url || listing.media[0].src)) || FALLBACK_IMAGE;
 
 	let imgUrl = rawImage.includes('res.cloudinary.com')
 		? rawImage.replace('/upload/', '/upload/f_auto,q_auto,w_300,h_300,c_fill/')
@@ -189,17 +189,18 @@ function createFeaturedCard(listing) {
 
 	const linkHref = `./single.html?id=${encodeURIComponent(listing.id)}`;
 	const endsLabel = listing.endsAt ? formatEndsIn(new Date(listing.endsAt)) : 'No end date';
-	const bidsCount = Array.isArray(listing.bids) ? listing.bids.length : listing._count?.bids ?? 0;
+	const bidsCount = Array.isArray(listing.bids) ? listing.bids.length : (listing._count?.bids ?? 0);
 	const highest = getHighestBid(listing);
 
 	li.innerHTML = `
    <a href="${linkHref}" class="block overflow-hidden rounded-t-3xl bg-zinc-50 aspect-4/3">
-    <img
+        <img
       src="${imgUrl}"
       alt="${imgAlt}"
       class="w-full h-full object-cover"
       loading="lazy"
       decoding="async"
+      data-listing-image
     />
   </a>
 
@@ -275,6 +276,18 @@ function createFeaturedCard(listing) {
       </div>
     </div>
   `;
+	const imageEl = li.querySelector('[data-listing-image]');
+
+	if (imageEl) {
+		imageEl.addEventListener(
+			'error',
+			() => {
+				imageEl.src = FALLBACK_IMAGE;
+				imageEl.alt = 'Image unavailable';
+			},
+			{ once: true },
+		);
+	}
 
 	return li;
 }
